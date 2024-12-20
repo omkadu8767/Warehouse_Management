@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Item to Warehouse by Barcode Scanning</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEVhgc0zbiNruYRh-64g3RJCiH7kr7IgbU-Q&s.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        nav {
+            background-color: black;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        nav ul li {
+            float: left;
+        }
+
+        nav ul li a {
+            display: block;
+            color: greenyellow;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            background-color: green;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 100px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: darkgreen;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #f4f4f4;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+            background-color: #f4f4f4;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        /* Ensure flexibility in layout */
+        @media (max-width: 768px) {
+            form {
+                max-width: 100%;
+                padding: 15px;
+            }
+            button {
+                font-size: 14px;
+            }
+        }
+    </style>
+    <script>
+        // Mapping of barcodes to item details (name, ID, quantity)
+        const items = {
+            "0000000001": { name: "Product A", id: "1001", quantity: 10 },
+            "0000000002": { name: "Product B", id: "1002", quantity: 20 },
+            "0000000003": { name: "Product C", id: "1003", quantity: 30 },
+            "0000000004": { name: "Product D", id: "1004", quantity: 40 },
+            "0000000005": { name: "Product E", id: "1005", quantity: 50 },
+            "0000000006": { name: "Product F", id: "1006", quantity: 60 },
+            "0000000007": { name: "Product G", id: "1007", quantity: 70 },
+            "0000000008": { name: "Product H", id: "1008", quantity: 80 },
+            "0000000009": { name: "Product I", id: "1009", quantity: 90 },
+            "0000000010": { name: "Product J", id: "1010", quantity: 100 }
+        };
+
+        let pastPickups = []; // Store past pickups
+
+        function handleSubmit(event) {
+            event.preventDefault(); // Prevent actual form submission
+
+            // Get the barcode value from input
+            var barcode = document.querySelector('input[name="barcode"]').value;
+            var pickupQuantity = parseInt(document.querySelector('input[name="pickup_quantity"]').value);
+
+            // Get item details from the barcode
+            var item = items[barcode];
+
+            // If item exists, process the pick-up
+            if (item) {
+                // Check if sufficient stock is available
+                if (pickupQuantity <= item.quantity) {
+                    // Decrease the quantity of the item
+                    item.quantity -= pickupQuantity;
+
+                    // Record the current pickup
+                    pastPickups.push({ name: item.name, id: item.id, quantity: pickupQuantity });
+
+                    // Hide the form after submission
+                    document.getElementById('addRackForm').style.display = 'none';
+
+                    // Display success message and back button
+                    displayMessage();
+                } else {
+                    // Not enough stock
+                    document.getElementById('message').innerHTML = `
+                        <p style="color: red; font-weight: bold;">Not enough stock for this pick-up!</p>
+                    `;
+                }
+            } else {
+                // If item not found
+                document.getElementById('message').innerHTML = `
+                    <p style="color: red; font-weight: bold;">Invalid Barcode!</p>
+                `;
+            }
+        }
+
+        function displayMessage() {
+            // Display the successful submission message and the table of past pickups
+            let tableContent = `
+                <p style="color: green; font-weight: bold;">Form Submitted Successfully!</p>
+                <button onclick="goBack()">Back</button>
+                <table>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Item ID</th>
+                        <th>Add-Up Quantity</th>
+                    </tr>
+            `;
+
+            pastPickups.forEach(pickup => {
+                tableContent += `
+                    <tr>
+                        <td>${pickup.name}</td>
+                        <td>${pickup.id}</td>
+                        <td>${pickup.quantity}</td>
+                    </tr>
+                `;
+            });
+
+            tableContent += '</table>';
+
+            document.getElementById('message').innerHTML = tableContent;
+        }
+
+        function goBack() {
+            // Reload the page or redirect back to the form
+            document.getElementById('addRackForm').style.display = 'block';
+            document.getElementById('message').innerHTML = '';
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="addrack.html">Add Rack</a></li>
+            <li><a href="viewrack.html">View Rack</a></li>
+            <li><a href="addcategory.html">Add Category</a></li>
+            <li><a href="subcategory.html">Add Subcategory</a></li>
+            <li><a href="item.html">Define Item</a></li>
+            <li><a href="additem.html">Add Item</a></li>
+            <li><a href="additembarcode.html">Add Item by Barcode</a></li>
+            <li><a href="pickitem.html">Pick Item</a></li>
+            <li><a href="pickitembarcode.html">Pick Item by Barcode</a></li>
+        </ul>
+    </nav>
+
+    <h2>Add Item to Warehouse by Barcode Scanning</h2>
+    <form action="/pickupItemFromWarehouse" method="POST" id="addRackForm" onsubmit="handleSubmit(event)">
+        <label>Barcode Number:</label>
+        <input type="text" name="barcode" required><br><br>
+
+        <label>Add-Up Quantity:</label>
+        <input type="number" name="pickup_quantity" required><br><br>
+
+        <button type="submit">Add Item</button>
+    </form>
+
+    <div id="message"></div>
+</body>
+</html>

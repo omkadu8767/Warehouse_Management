@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Item to Warehouse</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEVhgc0zbiNruYRh-64g3RJCiH7kr7IgbU-Q&s.jpeg'); /* Add your background image here */
+            background-size: cover;
+            background-position: center;
+        }
+
+        nav {
+            background-color: black; /* Dark background color for menu */
+            position: fixed; /* Fix the menu to the top */
+            width: 100%; /* Full-width menu */
+            top: 0; /* Sticks to the top */
+            left: 0;
+            z-index: 1000; /* Ensures menu is always on top */
+        }
+
+        nav ul {
+            list-style-type: none; /* Remove default list styling */
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Clear floating elements */
+        }
+
+        nav ul li {
+            float: left; /* Align menu items horizontally */
+        }
+
+        nav ul li a {
+            display: block;
+            color: greenyellow; /* Text color */
+            text-align: center;
+            padding: 14px 20px; /* Padding inside menu items */
+            text-decoration: none; /* Remove underline from links */
+        }
+
+        nav ul li a:hover {
+            background-color: green; /* Hover effect for menu items */
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 100px; /* Adjust for fixed navbar */
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: darkgreen;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Table styling */
+        table {
+            margin-top: 20px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            border-collapse: collapse;
+            background-color: #f4f4f4;
+
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+            background-color: #f4f4f4;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .remove-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            background-color: #4CAF50;
+        }
+
+        /* Ensure flexibility in layout */
+        @media (max-width: 768px) {
+            form {
+                max-width: 100%;
+                padding: 15px;
+            }
+            button {
+                font-size: 14px;
+            }
+        }
+    </style>
+    <script>
+        let itemId = 1; // Initialize auto-incrementing Item ID
+        const itemEntries = []; // Array to store all item entries
+
+        function handleSubmit(event) {
+            event.preventDefault(); // Prevent actual form submission
+
+            // Retrieve form data
+            const itemName = document.querySelector('[name="item_id"]').value;
+            const addQuantity = document.querySelector('[name="add_quantity"]').value;
+
+            // Add new item data to the array
+            itemEntries.push({
+                itemId,
+                itemName,
+                addQuantity
+            });
+
+            // Generate the output table for all item entries
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Quantity Added</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            // Loop through all items and add rows to the table
+            itemEntries.forEach(item => {
+                tableHTML += `
+                    <tr>
+                        <td>${item.itemName}</td>
+                        <td>${item.addQuantity}</td>
+                        <td><button class="remove-btn" onclick="removeItem(${item.itemId})">Remove</button></td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `</tbody></table>`;
+
+            // Display the table below the form
+            document.getElementById('message').innerHTML = tableHTML;
+
+            itemId++; // Increment Item ID for the next submission
+
+            // Reset the form for the next entry
+            document.getElementById('addRackForm').reset();
+        }
+
+        function removeItem(id) {
+            // Filter out the item from the entries array
+            const index = itemEntries.findIndex(item => item.itemId === id);
+            if (index !== -1) {
+                itemEntries.splice(index, 1);
+            }
+
+            // Regenerate the table after removal
+            handleSubmit(new Event('submit'));
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="addrack.html">Add Rack</a></li>
+            <li><a href="viewrack.html">View Rack</a></li>
+            <li><a href="addcategory.html">Add Category</a></li>
+            <li><a href="subcategory.html">Add Subcategory</a></li>
+            <li><a href="item.html">Define Item</a></li>
+            <li><a href="additem.html">Add Item</a></li>
+            <li><a href="additembarcode.html">Add Item by Barcode</a></li>
+            <li><a href="pickitem.html">Pick Item</a></li>
+            <li><a href="pickitembarcode.html">Pick Item by Barcode</a></li>
+        </ul>
+    </nav>
+
+    <h2>Add Item to Warehouse</h2>
+    <form id="addRackForm" onsubmit="handleSubmit(event)">
+        <label>Item Name:</label>
+        <select name="item_id" required>
+            <option value="Parle Biscuit">Parle Biscuit</option>
+            <option value="Amul Butter">Amul Butter</option>
+            <option value="Lay's Chips">Lay's Chips</option>
+            <option value="Coca-Cola">Coca-Cola</option>
+            <option value="Dettol Soap">Dettol Soap</option>
+            <option value="Harpic Cleaner">Harpic Cleaner</option>
+            <option value="Samsung Mobile">Samsung Mobile</option>
+            <option value="HP Laptop">HP Laptop</option>
+            <option value="Dining Chair">Dining Chair</option>
+            <option value="Notebook">Notebook</option>
+            <option value="T-Shirt">T-Shirt</option>
+            <option value="Sports Shoes">Sports Shoes</option>
+            <option value="Basmati Rice">Basmati Rice</option>
+            <option value="Vanilla Ice Cream">Vanilla Ice Cream</option>
+            <option value="Harry Potter Book">Harry Potter Book</option>
+        </select><br><br>
+        
+        <label>Add Quantity:</label>
+        <input type="number" name="add_quantity" required><br><br>
+
+        <button type="submit">Add Item</button>
+    </form>
+
+    <div id="message"></div>
+</body>
+</html>
