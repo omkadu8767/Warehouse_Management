@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <title>Define Subcategory</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Subcategory</title>
     <style>
         /* General styling */
         body {
@@ -69,7 +72,8 @@
             font-weight: bold;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -104,7 +108,8 @@
             background-color: white;
         }
 
-        table th, table td {
+        table th,
+        table td {
             border: 1px solid #ccc;
             padding: 10px;
             text-align: center;
@@ -113,8 +118,17 @@
         table th {
             background-color: #f4f4f4;
         }
+
+        h2 {
+            text-align: center;
+            margin-top: 100px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
     </style>
+
 </head>
+
 <body>
     <nav class="navbar">
         <ul>
@@ -123,41 +137,28 @@
             <li><a href="addcategory.html">Add Category</a></li>
             <li><a href="subcategory.html">Add Subcategory</a></li>
             <li><a href="item.html">Define Item</a></li>
-            <li><a href="additem.html">Add Item</a></li>
+            <li><a href="additem.html">Add Item to WareHouse</a></li>
             <li><a href="additembarcode.html">Add Item by Barcode</a></li>
             <li><a href="pickitem.html">Pick Item</a></li>
             <li><a href="pickitembarcode.html">Pick Item by Barcode</a></li>
         </ul>
     </nav>
 
-    <h2>Define Subcategory</h2>
-    <form id="subcategoryForm">
-        <label>Subcategory Name:</label>
-        <input type="text" id="subcategory_name" required><br><br>
 
-        <label>Category:</label>
-        <select id="category_id" required>
-            <option value="111">Bakery Products</option>
-            <option value="112">Dairy Products</option>
-            <option value="113">Snacks</option>
-            <option value="114">Beverages</option>
-            <option value="115">Personal Care</option>
-            <option value="116">Cleaning Supplies</option>
-            <option value="117">Electronics</option>
-            <option value="118">Furniture</option>
-            <option value="119">Stationery</option>
-            <option value="120">Clothing</option>
-            <option value="121">Shoes</option>
-            <option value="122">Grocery</option>
-            <option value="123">Frozen Foods</option>
-            <option value="124">Toys</option>
-            <option value="125">Books</option>
-        </select><br><br>
-
+    <h2>Add Subcategory</h2>
+    <form id="addSubcategoryForm">
+        <label for="subcategory_name">Subcategory Name:</label>
+        <input type="text" id="subcategory_name" name="subcategory_name" required>
+        <br>
+        <label for="category_id">Category:</label>
+        <select id="category_id" name="category_id" required>
+            <!-- Options will be populated dynamically -->
+        </select>
+        <br>
         <button type="submit">Add Subcategory</button>
     </form>
 
-    <table id="subcategoryTable">
+    <!-- <table id="subcategoryTable">
         <thead>
             <tr>
                 <th>Subcategory ID</th>
@@ -166,36 +167,70 @@
                 <th>Category ID</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- Dynamic rows will be added here -->
-        </tbody>
-    </table>
+        <tbody></tbody>
+    </table> -->
 
     <script>
         let subcategoryCounter = 1;
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fetch categories to populate the dropdown
+            fetch('/categories')
+                .then(response => response.json())
+                .then(data => {
+                    const categorySelect = document.getElementById('category_id');
+                    data.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.category_id;
+                        option.textContent = category.category_name;
+                        categorySelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching categories:', error);
+                });
 
-        document.getElementById("subcategoryForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevent form submission
+            // Handle form submission
+            document.getElementById('addSubcategoryForm').addEventListener('submit', function (event) {
+                event.preventDefault();
 
-            const subcategoryName = document.getElementById("subcategory_name").value;
-            const categorySelect = document.getElementById("category_id");
-            const categoryId = categorySelect.value;
-            const categoryName = categorySelect.options[categorySelect.selectedIndex].text;
+                const subcategory_name = document.getElementById('subcategory_name').value;
+                const category_id = document.getElementById('category_id').value;
 
-            // Add new row to the table
-            const table = document.getElementById("subcategoryTable").querySelector("tbody");
-            const newRow = table.insertRow();
+                fetch('/addSubcategory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ subcategory_name, category_id })
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        // Add new row to the table if successful
+                        if (data) {
+                            // Add new row to the table if successful
+                            const table = document.getElementById("subcategoryTable").querySelector("tbody");
+                            const newRow = table.insertRow();
+                            newRow.insertCell(0).textContent = data.subcategory_id;
+                            newRow.insertCell(1).textContent = subcategory_name;
+                            newRow.insertCell(2).textContent = categorySelect.options[categorySelect.selectedIndex].text;
+                            newRow.insertCell(3).textContent = category_id;
 
-            newRow.insertCell(0).textContent = subcategoryCounter++;
-            newRow.insertCell(1).textContent = subcategoryName;
-            newRow.insertCell(2).textContent = categoryName;
-            newRow.insertCell(3).textContent = categoryId;
 
-            // Clear form inputs
-            document.getElementById("subcategory_name").value = "";
-            document.getElementById("category_id").selectedIndex = 0;
+                            if (data === 'Subcategory added successfully') {
+                                // Clear form inputs
+                                document.getElementById("subcategory_name").value = "";
+                                document.getElementById("category_id").selectedIndex = 0; // Reset selection
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error adding subcategory');
+                    });
+            });
         });
     </script>
 </body>
-</html>
 
+</html>

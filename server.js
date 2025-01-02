@@ -66,7 +66,7 @@ app.post('/addRack', (req, res) => {
             const sqlBins = 'INSERT INTO bins (bin_id, shelf_id, rack_id, bin_number) VALUES ?';
             db.query(sqlBins, [bins], (err) => {
                 if (err) return handleError(err, res, 'Error adding bins');
-                res.send('Rack, shelves, and bins added successfully');
+                res.send('Rack added successfully');
             });
         });
     });
@@ -91,19 +91,25 @@ app.post('/addCategory', (req, res) => {
 
     const sql = 'INSERT INTO categories (category_name) VALUES (?)';
     db.query(sql, [category_name], (err) => {
-        if (err) return handleError(err, res, 'Error adding category');
-        res.send('Category added successfully');
+        if (err) {
+            console.error(err); // Log the error for debugging
+            return res.status(500).send('Error adding category'); // Send error response
+        }
+        res.send('Category added successfully'); // Send success response
     });
 });
 
-// Add Subcategory (Feature 5)
+// Handle adding a subcategory
 app.post('/addSubcategory', (req, res) => {
     const { subcategory_name, category_id } = req.body;
+
+    console.log('Received:', { subcategory_name, category_id }); // Log received data
 
     if (!subcategory_name || !category_id) {
         return res.status(400).send('All fields are required');
     }
 
+    // Check if the category exists
     const checkCategorySql = 'SELECT * FROM categories WHERE category_id = ?';
     db.query(checkCategorySql, [category_id], (err, results) => {
         if (err) return handleError(err, res, 'Error checking category');
@@ -112,18 +118,33 @@ app.post('/addSubcategory', (req, res) => {
             return res.status(400).send('Category does not exist. Please add the category first.');
         }
 
+        // Create subcategory ID based on your requirements
         const subcategory_id = `${category_id}-${Date.now().toString().slice(-4)}`;
         const sql = 'INSERT INTO subcategories (subcategory_id, subcategory_name, category_id) VALUES (?, ?, ?)';
+
         db.query(sql, [subcategory_id, subcategory_name, category_id], (err) => {
-            if (err) return handleError(err, res, 'Error adding subcategory');
+            if (err) {
+                console.error(err); // Log any SQL errors
+                return res.status(500).send('Error adding subcategory');
+            }
             res.send('Subcategory added successfully');
         });
     });
 });
 
+// Handle retrieving categories for the UI
+app.get('/categories', (req, res) => {
+    const sql = 'SELECT * FROM categories';
+    db.query(sql, (err, results) => {
+        if (err) return handleError(err, res, 'Error fetching categories');
+
+        res.json(results); // Send categories as JSON
+    });
+});
+
 // Add Item (Feature 6)
 app.post('/addItem', (req, res) => {
-    const { item_name, category_id, subcategory_id, bin_id, quantity, quantity_unit, barcode_value } = req.body;
+    const { item_name, category_id, subcategory_id, quantity, quantity_unit, barcode_value } = req.body;
 
     if (!item_name || !category_id || !subcategory_id || !quantity || !quantity_unit || !barcode_value) {
         return res.status(400).send('All fields are required');
@@ -144,8 +165,9 @@ app.post('/addItem', (req, res) => {
 
         console.log('Subcategory exists:', results);
 
-        const sql = 'INSERT INTO items (item_name, category_id, subcategory_id, bin_id, quantity, quantity_unit, barcode_value) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        db.query(sql, [item_name, category_id, subcategory_id, bin_id, quantity, quantity_unit, barcode_value], (err) => {
+        // Remove bin_id from here since it doesn't exist in your items table
+        const sql = 'INSERT INTO items (item_name, category_id, subcategory_id, quantity, quantity_unit, barcode_value) VALUES (?, ?, ?, ?, ?, ?)';
+        db.query(sql, [item_name, category_id, subcategory_id, quantity, quantity_unit, barcode_value], (err) => {
             if (err) {
                 console.error('Error adding item:', err);
                 return res.status(500).send('Error adding item');
@@ -154,6 +176,17 @@ app.post('/addItem', (req, res) => {
         });
     });
 });
+app.get('/subcategories', (req, res) => {
+    const categoryId = req.query.category_id;
+
+    const sql = 'SELECT * FROM subcategories WHERE category_id = ?';
+    db.query(sql, [categoryId], (err, results) => {
+        if (err) return handleError(err, res, 'Error fetching subcategories');
+
+        res.json(results); // Send subcategories as JSON
+    });
+});
+
 
 // Transactions (Feature 7, 9, 10)
 app.post('/addTransaction', (req, res) => {
@@ -179,6 +212,148 @@ app.post('/addTransaction', (req, res) => {
     });
 });
 
+// Endpoint to add items to the warehouse
+app.post('/addItemToWarehouse', (req, res) => {
+    const { item_id, item_name, item_add_quantity } = req.body;
+
+    if (!item_id || !item_name || !item_add_quantity) {
+        return res.status(400).send('All fields are required');
+    }
+
+    const sql = `
+        INSERT INTO add_item_to_warehouse (item_id, item_name, item_add_quantity)
+        VALUES (?, ?, ?)
+    `;
+    db.query(sql, [item_id, item_name, item_add_quantity], (err) => {
+        if (err) {
+            console.error('Error adding item to warehouse:', err);
+            return res.status(500).send('Error adding item to warehouse');
+        }
+
+        // Update item quantity in the main `items` table
+        const updateSql = 'UPDATE items SET quantity = quantity + ? WHERE item_id = ?';
+        db.query(updateSql, [item_add_quantity, item_id], (err) => {
+            if (err) {
+                console.error('Error updating item quantity:', err);
+                return res.status(500).send('Error updating item quantity');
+            }
+            res.send('Item added to warehouse successfully');
+        });
+    });
+});
+
+// Endpoint to pick up items from the warehouse
+app.post('/pickUpItem', (req, res) => {
+    const { item_id, item_name, item_quantity } = req.body;
+
+    if (!item_id || !item_name || !item_quantity) {
+        return res.status(400).send('All fields are required');
+    }
+
+    const sql = `
+        INSERT INTO pick_up_item_from_warehouse (item_id, item_name, item_quantity)
+        VALUES (?, ?, ?)
+    `;
+    db.query(sql, [item_id, item_name, item_quantity], (err) => {
+        if (err) {
+            console.error('Error picking up item from warehouse:', err);
+            return res.status(500).send('Error picking up item from warehouse');
+        }
+
+        // Update item quantity in the main `items` table
+        const updateSql = 'UPDATE items SET quantity = quantity - ? WHERE item_id = ?';
+        db.query(updateSql, [item_quantity, item_id], (err) => {
+            if (err) {
+                console.error('Error updating item quantity:', err);
+                return res.status(500).send('Error updating item quantity');
+            }
+            res.send('Item picked up from warehouse successfully');
+        });
+    });
+});
+
+// Endpoint to handle barcode-based addition
+app.post('/addItemByBarcode', (req, res) => {
+    const { item_name, item_id, item_quantity, barcode_value } = req.body;
+
+    if (!item_name || !item_id || !item_quantity || !barcode_value) {
+        return res.status(400).send('All fields are required');
+    }
+
+    const sql = `
+        INSERT INTO add_item_to_warehouse_by_barcode_scanning (item_name, item_id, item_quantity, barcode_value)
+        VALUES (?, ?, ?, ?)
+    `;
+    db.query(sql, [item_name, item_id, item_quantity, barcode_value], (err, result) => {
+        if (err) {
+            console.error('Error adding item by barcode:', err);
+            return res.status(500).send('Error adding item by barcode');
+        }
+
+        res.json({
+            message: 'Item added to warehouse by barcode successfully',
+            transaction_id: result.insertId,
+            transaction_date: new Date().toISOString()
+        });
+    });
+});
+
+app.post('/pickUpItemByBarcode', (req, res) => {
+    const { barcode_value, item_quantity, item_id, item_name } = req.body;
+
+    if (!barcode_value || !item_quantity || !item_id || !item_name) {
+        return res.status(400).send('Barcode value and item quantity are required');
+    }
+
+    // Fetch item details using the barcode from the `add_item_to_warehouse_by_barcode_scanning` table
+    const fetchItemSql = `
+        SELECT item_id, item_name, item_quantity 
+        FROM add_item_to_warehouse_by_barcode_scanning 
+        WHERE barcode_value = ?
+    `;
+
+    db.query(fetchItemSql, [barcode_value], (err, results) => {
+        if (err) return handleError(err, res, 'Error fetching item by barcode');
+
+        console.log('Fetch item results:', results); // Log the results
+
+        if (results.length === 0) {
+            console.error(`Barcode ${barcode_value} not found in the database`);
+            return res.status(400).send(`Item with the barcode ${barcode_value} does not exist. Please add it first.`);
+        }
+
+        const { item_id, item_name, item_quantity: availableQuantity } = results[0];
+
+        // Check if the requested quantity is available
+        if (item_quantity > availableQuantity) {
+            return res.status(400).send('Insufficient quantity available in the warehouse.');
+        }
+
+        // Insert transaction into `pick_up_item_by_barcode_scanning` table
+        const insertTransactionSql = `
+            INSERT INTO pick_up_item_by_barcode_scanning (item_id, item_name, item_quantity, barcode_value)
+            VALUES (?, ?, ?, ?)
+        `;
+        db.query(insertTransactionSql, [item_id, item_name, item_quantity, barcode_value], (err, result) => {
+            if (err) return handleError(err, res, 'Error recording transaction');
+
+            // Update the quantity in the `add_item_to_warehouse_by_barcode_scanning` table
+            const updateItemSql = `
+                UPDATE add_item_to_warehouse_by_barcode_scanning 
+                SET item_quantity = item_quantity - ? 
+                WHERE barcode_value = ?
+            `;
+            db.query(updateItemSql, [item_quantity, barcode_value, item_name, item_id], (err) => {
+                if (err) return handleError(err, res, 'Error updating item quantity');
+                res.json({
+                    message: 'Item picked up by barcode successfully',
+                    transaction_id: result.insertId,
+                    transaction_date: new Date().toISOString(),
+                });
+            });
+        });
+    });
+});
 // Default route for undefined routes
 app.use((req, res) => {
     res.status(404).send('Page not found');
@@ -187,5 +362,5 @@ app.use((req, res) => {
 // Start the server
 const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}/index.html`);
 });
