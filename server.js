@@ -290,116 +290,224 @@ app.post('/pickUpItem', (req, res) => {
 
 
 // Endpoint to handle barcode-based addition
-// Endpoint to fetch items based on barcode
-app.get('/items', (req, res) => {
-    const { barcode } = req.query;
-
-    const sql = 'SELECT * FROM items WHERE barcode_value = ?'; // Adjust this query as necessary based on your database structure
-    db.query(sql, [barcode], (err, results) => {
-        if (err) return handleError(err, res, 'Error fetching items');
-
-        if (results.length > 0) {
-            res.json(results[0]); // Send the first matching item as JSON response
-        } else {
-            res.status(404).send('Item not found');
-        }
-    });
-});
-
-// Endpoint to handle barcode-based addition
 app.post('/addItemByBarcode', (req, res) => {
-    const { item_id, item_name, item_quantity, barcode_value } = req.body;
+    const { item_name, item_quantity, barcode_value } = req.body;
 
-    if (!item_id || !item_name || !item_quantity || !barcode_value) {
-        return res.status(400).send('All fields are required');
+    if (!item_name || !item_quantity || !barcode_value) {
+        return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const sql = `
-        INSERT INTO add_item_to_warehouse_by_barcode_scanning (item_id, item_name, item_quantity, barcode_value)
-        VALUES (?, ?, ?, ?)
+    // Insert new item directly into the add_item_to_warehouse_by_barcode_scanning table
+    const sqlInsertTransaction = `
+        INSERT INTO add_item_to_warehouse_by_barcode_scanning (item_name, item_quantity, barcode_value)
+        VALUES (?, ?, ?)
     `;
 
-    db.query(sql, [item_id, item_name, item_quantity, barcode_value], (err) => {
+    db.query(sqlInsertTransaction, [item_name, item_quantity, barcode_value], (err) => {
         if (err) {
             console.error('Error adding item by barcode:', err);
-            return res.status(500).send('Error adding item by barcode');
+            return res.status(500).json({ message: 'Error adding item by barcode' });
         }
 
-        // Update quantity in items table
-        const updateSql = 'UPDATE items SET quantity = quantity + ? WHERE item_id = ?';
-
-        db.query(updateSql, [item_quantity, item_id], (err) => {
-            if (err) {
-                console.error('Error updating item quantity:', err);
-                return res.status(500).send('Error updating item quantity');
-            }
-
-            res.json({
-                message: 'Item added to warehouse by barcode successfully',
-            });
+        res.json({
+            message: 'Item added to warehouse by barcode successfully',
         });
     });
 });
 
+// Endpoint to handle barcode-based pickUp
 
+// Endpoint to fetch all available barcodes
+app.get('/barcodes', (req, res) => {
+    const sqlGetBarcodes = 'SELECT DISTINCT barcode_value FROM add_item_to_warehouse_by_barcode_scanning';
 
+    db.query(sqlGetBarcodes, (err, results) => {
+        if (err) {
+            console.error('Error fetching barcodes:', err);
+            return res.status(500).json({ message: 'Error fetching barcodes' });
+        }
 
-app.post('/pickUpItemByBarcode', (req, res) => {
-    const { barcode_value, item_quantity, item_id, item_name } = req.body;
+        res.json(results); // Send back the list of barcodes
+    });
+});
 
-    if (!barcode_value || !item_quantity || !item_id || !item_name) {
-        return res.status(400).send('Barcode value and item quantity are required');
+// Endpoint to fetch item details based on barcode
+app.get('/items', (req, res) => {
+    const barcode = req.query.barcode;
+
+    if (!barcode) {
+        return res.status(400).json({ message: 'Barcode is required' });
     }
 
-    // Fetch item details using the barcode from the `add_item_to_warehouse_by_barcode_scanning` table
-    const fetchItemSql = `
-        SELECT item_id, item_name, item_quantity 
-        FROM add_item_to_warehouse_by_barcode_scanning 
-        WHERE barcode_value = ?
-    `;
+    const sqlGetItem = 'SELECT item_name, item_quantity FROM add_item_to_warehouse_by_barcode_scanning WHERE barcode_value = ?';
 
-    db.query(fetchItemSql, [barcode_value], (err, results) => {
-        if (err) return handleError(err, res, 'Error fetching item by barcode');
-
-        console.log('Fetch item results:', results); // Log the results
+    db.query(sqlGetItem, [barcode], (err, results) => {
+        if (err) {
+            console.error('Error fetching item:', err);
+            return res.status(500).json({ message: 'Error fetching item' });
+        }
 
         if (results.length === 0) {
-            console.error(`Barcode ${barcode_value} not found in the database`);
-            return res.status(400).send(`Item with the barcode ${barcode_value} does not exist. Please add it first.`);
+            return res.status(404).json({ message: 'Item not found with this barcode' });
         }
 
-        const { item_id, item_name, item_quantity: availableQuantity } = results[0];
+        res.json(results[0]); // Send back the first matching item's details
+    });
+});
 
-        // Check if the requested quantity is available
-        if (item_quantity > availableQuantity) {
-            return res.status(400).send('Insufficient quantity available in the warehouse.');
+// Endpoint to fetch all available barcodes
+app.get('/barcodes', (req, res) => {
+    const sqlGetBarcodes = 'SELECT DISTINCT barcode_value FROM add_item_to_warehouse_by_barcode_scanning';
+
+    db.query(sqlGetBarcodes, (err, results) => {
+        if (err) {
+            console.error('Error fetching barcodes:', err);
+            return res.status(500).json({ message: 'Error fetching barcodes' });
         }
 
-        // Insert transaction into `pick_up_item_by_barcode_scanning` table
-        const insertTransactionSql = `
-            INSERT INTO pick_up_item_by_barcode_scanning (item_id, item_name, item_quantity, barcode_value)
-            VALUES (?, ?, ?, ?)
-        `;
-        db.query(insertTransactionSql, [item_id, item_name, item_quantity, barcode_value], (err, result) => {
-            if (err) return handleError(err, res, 'Error recording transaction');
+        res.json(results); // Send back the list of barcodes
+    });
+});
 
-            // Update the quantity in the `add_item_to_warehouse_by_barcode_scanning` table
-            const updateItemSql = `
-                UPDATE add_item_to_warehouse_by_barcode_scanning 
-                SET item_quantity = item_quantity - ? 
-                WHERE barcode_value = ?
-            `;
-            db.query(updateItemSql, [item_quantity, barcode_value, item_name, item_id], (err) => {
-                if (err) return handleError(err, res, 'Error updating item quantity');
+// Endpoint to fetch all available barcodes
+app.get('/barcodes', (req, res) => {
+    const sqlGetBarcodes = 'SELECT DISTINCT barcode_value FROM add_item_to_warehouse_by_barcode_scanning';
+
+    db.query(sqlGetBarcodes, (err, results) => {
+        if (err) {
+            console.error('Error fetching barcodes:', err);
+            return res.status(500).json({ message: 'Error fetching barcodes' });
+        }
+
+        res.json(results); // Send back the list of barcodes
+    });
+});
+
+// Endpoint to fetch item details based on barcode
+app.get('/items', (req, res) => {
+    const barcode = req.query.barcode;
+
+    if (!barcode) {
+        return res.status(400).json({ message: 'Barcode is required' });
+    }
+
+    const sqlGetItem = 'SELECT item_name, item_quantity FROM add_item_to_warehouse_by_barcode_scanning WHERE barcode_value = ?';
+
+    db.query(sqlGetItem, [barcode], (err, results) => {
+        if (err) {
+            console.error('Error fetching item:', err);
+            return res.status(500).json({ message: 'Error fetching item' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Item not found with this barcode' });
+        }
+
+        res.json(results[0]); // Send back the first matching item's details
+    });
+});
+
+// Endpoint to handle picking items by barcode
+// Endpoint to fetch all available barcodes
+app.get('/barcodes', (req, res) => {
+    const sqlGetBarcodes = 'SELECT DISTINCT barcode_value FROM add_item_to_warehouse_by_barcode_scanning';
+
+    db.query(sqlGetBarcodes, (err, results) => {
+        if (err) {
+            console.error('Error fetching barcodes:', err);
+            return res.status(500).json({ message: 'Error fetching barcodes' });
+        }
+
+        res.json(results); // Send back the list of barcodes
+    });
+});
+
+// Endpoint to fetch item details based on barcode
+app.get('/items', (req, res) => {
+    const barcode = req.query.barcode;
+
+    if (!barcode) {
+        return res.status(400).json({ message: 'Barcode is required' });
+    }
+
+    const sqlGetItem = 'SELECT item_name, item_quantity FROM add_item_to_warehouse_by_barcode_scanning WHERE barcode_value = ?';
+
+    db.query(sqlGetItem, [barcode], (err, results) => {
+        if (err) {
+            console.error('Error fetching item:', err);
+            return res.status(500).json({ message: 'Error fetching item' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Item not found with this barcode' });
+        }
+
+        res.json(results[0]); // Send back the first matching item's details
+    });
+});
+
+// Endpoint to handle picking items by barcode
+app.post('/pickUpItemByBarcode', (req, res) => {
+    const item_name = 'item_name';
+    const { barcode_value, item_quantity } = req.body;
+
+    if (!barcode_value || !item_name || !item_quantity) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const sqlGetItem = 'SELECT item_quantity FROM add_item_to_warehouse_by_barcode_scanning WHERE barcode_value = ?';
+
+    db.query(sqlGetItem, [barcode_value], (err, results) => {
+        if (err) {
+            console.error('Error fetching item:', err);
+            return res.status(500).json({ message: 'Error fetching item' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Item not found with this barcode' });
+        }
+
+        const currentQuantity = results[0].item_quantity;
+
+        if (item_quantity > currentQuantity) {
+            return res.status(400).json({ message: 'Not enough stock available' });
+        }
+
+        // Update quantity in add_item_to_warehouse_by_barcode_scanning table
+        const updatedQuantity = currentQuantity - item_quantity;
+
+        const sqlUpdateItem = 'UPDATE add_item_to_warehouse_by_barcode_scanning SET item_quantity = ? WHERE barcode_value = ?';
+
+        db.query(sqlUpdateItem, [updatedQuantity, barcode_value], (err) => {
+            if (err) {
+                console.error('Error updating item quantity:', err);
+                return res.status(500).json({ message: 'Error updating item quantity' });
+            }
+
+            // Insert new entry into pick_up_item_by_barcode_scanning table
+            const sqlInsertTransaction = `
+                  INSERT INTO pick_up_item_by_barcode_scanning (item_name, item_quantity, barcode_value)
+                  VALUES (?, ?, ?)
+              `;
+
+            db.query(sqlInsertTransaction, [item_name, item_quantity, barcode_value], (err) => {
+                if (err) {
+                    console.error('Error adding pick-up transaction:', err);
+                    return res.status(500).json({ message: 'Error adding pick-up transaction' });
+                }
+
                 res.json({
-                    message: 'Item picked up by barcode successfully',
-                    transaction_id: result.insertId,
-                    transaction_date: new Date().toISOString(),
+                    message: 'Item picked successfully',
+                    item_name: item_name,
+                    picked_quantity: item_quantity,
                 });
             });
         });
     });
 });
+
+
+
 // Default route for undefined routes
 app.use((req, res) => {
     res.status(404).send('Page not found');

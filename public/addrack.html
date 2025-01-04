@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
             background-size: cover;
             background-position: center;
         }
+
         /* Common styling */
         nav {
             background-color: black;
@@ -24,15 +26,18 @@
             left: 0;
             z-index: 1000;
         }
+
         nav ul {
             list-style-type: none;
             margin: 0;
             padding: 0;
             overflow: hidden;
         }
+
         nav ul li {
             float: left;
         }
+
         nav ul li a {
             display: block;
             color: greenyellow;
@@ -40,21 +45,25 @@
             padding: 14px 20px;
             text-decoration: none;
         }
+
         nav ul li a:hover {
             background-color: green;
         }
+
         body {
             margin: 0;
             padding-top: 50px;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
         }
+
         h2 {
             text-align: center;
-            color:black;
+            color: black;
             background-color: #f4f4f4;
 
         }
+
         form {
             max-width: 400px;
             margin: 20px auto;
@@ -63,11 +72,13 @@
             border-radius: 10px;
             background: #fff;
         }
+
         label {
             display: block;
             margin-bottom: 10px;
             font-weight: bold;
         }
+
         input {
             width: 100%;
             padding: 8px;
@@ -75,6 +86,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         button {
             width: 100%;
             padding: 10px;
@@ -85,6 +97,7 @@
             cursor: pointer;
             font-size: 16px;
         }
+
         button:hover {
             background-color: darkgreen;
         }
@@ -127,6 +140,7 @@
         }
     </script>
 </head>
+
 <body>
 
     <h2>Add Rack</h2>
@@ -145,7 +159,7 @@
 
     <form action="/addRack" method="POST">
         <label for="rack_name">Rack Name:</label>
-        <input type="text" id="rack_name" name="rack_name"  placeholder="Enter Rack Name" required>
+        <input type="text" id="rack_name" name="rack_name" placeholder="Enter Rack Name" required>
         <label for="num_shelves">Number of Shelves:</label>
         <input type="number" id="num_shelves" name="num_shelves" placeholder="Enter Number of Shelves" required>
         <label for="num_bins">Number of Bins:</label>
@@ -154,18 +168,19 @@
     </form>
 
 
-        <nav class="navbar">
-            <ul>
-                <li><a href="addrack.html">Add Rack</a></li>
-                <li><a href="viewrack.html">View Rack</a></li>
-                <li><a href="addcategory.html">Add Category</a></li>
-                <li><a href="subcategory.html">Add Subcategory</a></li>
-                <li><a href="item.html">Define Item</a></li>
-                <li><a href="additem.html">Add Item to WareHouse</a></li>
-                <li><a href="additembarcode.html">Add Item by Barcode</a></li>
-                <li><a href="pickitem.html">Pick Item</a></li>
-                <li><a href="pickitembarcode.html">Pick Item by Barcode</a></li>
-            </ul>
-        </nav>
+    <nav class="navbar">
+        <ul>
+            <li><a href="addrack.html">Add Rack</a></li>
+            <li><a href="viewrack.html">View Rack</a></li>
+            <li><a href="addcategory.html">Add Category</a></li>
+            <li><a href="subcategory.html">Add Subcategory</a></li>
+            <li><a href="item.html">Define Item</a></li>
+            <li><a href="additem.html">Add Item to WareHouse</a></li>
+            <li><a href="additembarcode.html">Add Item by Barcode</a></li>
+            <li><a href="pickitem.html">Pick Item</a></li>
+            <li><a href="pickitembarcode.html">Pick Item by Barcode</a></li>
+        </ul>
+    </nav>
 </body>
+
 </html>
