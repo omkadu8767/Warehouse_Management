@@ -1,56 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Item to Warehouse</title>
-    <style>
+     <style>
         /* General styling */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEVhgc0zbiNruYRh-64g3RJCiH7kr7IgbU-Q&s.jpeg'); /* Add your background image here */
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEVhgc0zbiNruYRh-64g3RJCiH7kr7IgbU-Q&s.jpeg');
             background-size: cover;
             background-position: center;
         }
 
         nav {
-            background-color: black; /* Dark background color for menu */
-            position: fixed; /* Fix the menu to the top */
-            width: 100%; /* Full-width menu */
-            top: 0; /* Sticks to the top */
+            background-color: black;
+            position: fixed;
+            width: 100%;
+            top: 0;
             left: 0;
-            z-index: 1000; /* Ensures menu is always on top */
+            z-index: 1000;
         }
 
         nav ul {
-            list-style-type: none; /* Remove default list styling */
+            list-style-type: none;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Clear floating elements */
+            overflow: hidden;
         }
 
         nav ul li {
-            float: left; /* Align menu items horizontally */
+            float: left;
         }
 
         nav ul li a {
             display: block;
-            color: greenyellow; /* Text color */
+            color: greenyellow;
             text-align: center;
-            padding: 14px 20px; /* Padding inside menu items */
-            text-decoration: none; /* Remove underline from links */
+            padding: 14px 20px;
+            text-decoration: none;
         }
 
         nav ul li a:hover {
-            background-color: green; /* Hover effect for menu items */
+            background-color: green;
         }
 
         h2 {
             text-align: center;
-            margin-top: 100px; /* Adjust for fixed navbar */
+            margin-top: 100px;
             color: #333;
             background-color: #f4f4f4;
         }
@@ -71,7 +72,8 @@
             font-weight: bold;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -99,40 +101,28 @@
             margin-top: 20px;
         }
 
-        /* Table styling */
         table {
-            margin-top: 20px;
-            width: 80%;
-            margin-left: auto;
-            margin-right: auto;
+            width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
             background-color: #f4f4f4;
-
         }
 
-        th, td {
-            padding: 10px;
+        table,
+        th,
+        td {
             border: 1px solid #ccc;
-            text-align: left;
             background-color: #f4f4f4;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
         }
 
         th {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .remove-btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .remove-btn:hover {
-            background-color: #4CAF50;
+            background-color: #f4f4f4;
         }
 
         /* Ensure flexibility in layout */
@@ -141,76 +131,14 @@
                 max-width: 100%;
                 padding: 15px;
             }
+
             button {
                 font-size: 14px;
             }
         }
     </style>
-    <script>
-        let itemId = 1; // Initialize auto-incrementing Item ID
-        const itemEntries = []; // Array to store all item entries
-
-        function handleSubmit(event) {
-            event.preventDefault(); // Prevent actual form submission
-
-            // Retrieve form data
-            const itemName = document.querySelector('[name="item_id"]').value;
-            const addQuantity = document.querySelector('[name="add_quantity"]').value;
-
-            // Add new item data to the array
-            itemEntries.push({
-                itemId,
-                itemName,
-                addQuantity
-            });
-
-            // Generate the output table for all item entries
-            let tableHTML = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Quantity Added</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            // Loop through all items and add rows to the table
-            itemEntries.forEach(item => {
-                tableHTML += `
-                    <tr>
-                        <td>${item.itemName}</td>
-                        <td>${item.addQuantity}</td>
-                        <td><button class="remove-btn" onclick="removeItem(${item.itemId})">Remove</button></td>
-                    </tr>
-                `;
-            });
-
-            tableHTML += `</tbody></table>`;
-
-            // Display the table below the form
-            document.getElementById('message').innerHTML = tableHTML;
-
-            itemId++; // Increment Item ID for the next submission
-
-            // Reset the form for the next entry
-            document.getElementById('addRackForm').reset();
-        }
-
-        function removeItem(id) {
-            // Filter out the item from the entries array
-            const index = itemEntries.findIndex(item => item.itemId === id);
-            if (index !== -1) {
-                itemEntries.splice(index, 1);
-            }
-
-            // Regenerate the table after removal
-            handleSubmit(new Event('submit'));
-        }
-    </script>
 </head>
+
 <body>
     <nav class="navbar">
         <ul>
@@ -219,7 +147,7 @@
             <li><a href="addcategory.html">Add Category</a></li>
             <li><a href="subcategory.html">Add Subcategory</a></li>
             <li><a href="item.html">Define Item</a></li>
-            <li><a href="additem.html">Add Item to WareHouse</a></li>
+            <li><a href="additem.html">Add Item to Warehouse</a></li>
             <li><a href="additembarcode.html">Add Item by Barcode</a></li>
             <li><a href="pickitem.html">Pick Item</a></li>
             <li><a href="pickitembarcode.html">Pick Item by Barcode</a></li>
@@ -227,32 +155,91 @@
     </nav>
 
     <h2>Add Item to Warehouse</h2>
-    <form id="addRackForm" onsubmit="handleSubmit(event)">
+    <form id="addItemForm" onsubmit="handleSubmit(event)">
         <label>Item Name:</label>
-        <select name="item_id" required>
-            <option value="Parle Biscuit">Parle Biscuit</option>
-            <option value="Amul Butter">Amul Butter</option>
-            <option value="Lay's Chips">Lay's Chips</option>
-            <option value="Coca-Cola">Coca-Cola</option>
-            <option value="Dettol Soap">Dettol Soap</option>
-            <option value="Harpic Cleaner">Harpic Cleaner</option>
-            <option value="Samsung Mobile">Samsung Mobile</option>
-            <option value="HP Laptop">HP Laptop</option>
-            <option value="Dining Chair">Dining Chair</option>
-            <option value="Notebook">Notebook</option>
-            <option value="T-Shirt">T-Shirt</option>
-            <option value="Sports Shoes">Sports Shoes</option>
-            <option value="Basmati Rice">Basmati Rice</option>
-            <option value="Vanilla Ice Cream">Vanilla Ice Cream</option>
-            <option value="Harry Potter Book">Harry Potter Book</option>
-        </select><br><br>
-        
+        <select name="item_id" id="item_id" required></select>
+
         <label>Add Quantity:</label>
-        <input type="number" name="add_quantity" required><br><br>
+        <input type="number" name="add_quantity" required>
 
         <button type="submit">Add Item</button>
     </form>
 
     <div id="message"></div>
+
+    <!-- Table to display added items -->
+    <table id="itemTable">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Quantity Added</th>
+                <!-- <th>Action</th> Action for removing item -->
+            </tr>
+        </thead>
+        <tbody></tbody> <!-- Dynamic rows will be added here -->
+    </table>
+
+    <script>
+        const itemEntries = []; // Array to store all item entries
+
+        // Fetch available items on page load
+        window.onload = function () {
+            fetch('/items') // Ensure this endpoint returns all available items
+                .then(response => response.json())
+                .then(items => {
+                    const itemSelect = document.getElementById("item_id");
+                    items.forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = item.item_id; // Assuming item_id is the unique identifier
+                        option.textContent = item.item_name; // Assuming item_name is the display name
+                        itemSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching items:', error));
+        };
+
+        function handleSubmit(event) {
+            event.preventDefault(); // Prevent actual form submission
+
+            // Retrieve form data
+            const itemId = document.querySelector('[name="item_id"]').value.trim();
+            const addQuantity = document.querySelector('[name="add_quantity"]').value.trim();
+
+            // Prepare data for server submission
+            const data = {
+                item_id: itemId,
+                item_add_quantity: addQuantity,
+                item_name: document.querySelector('[name="item_id"]').options[document.querySelector('[name="item_id"]').selectedIndex].textContent // Get the selected item's name
+            };
+
+            // Send data to server
+            fetch('/addItemToWarehouse', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data); // Show success or error message
+                    if (data === 'Item added to warehouse successfully') { // If the response was successful
+                       const table = document.getElementById("itemTable").querySelector("tbody");
+                        const newRow = table.insertRow();
+                        newRow.insertCell(0).textContent = document.querySelector('[name="item_id"]').options[document.querySelector('[name="item_id"]').selectedIndex].textContent; // Displaying selected item name
+                        newRow.insertCell(1).textContent = addQuantity; // Displaying quantity added
+
+                        // Clear form inputs
+                        document.getElementById("addItemForm").reset(); // Reset form inputs
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error adding item to warehouse');
+                });
+        }
+    </script>
+
 </body>
+
 </html>

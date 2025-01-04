@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Pick Item from Warehouse</title>
     <style>
@@ -69,7 +70,8 @@
             font-weight: bold;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -101,123 +103,28 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            background-color: #f4f4f4;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid #ccc;
-            background-color: #f4f4f4;
         }
 
-        th, td {
+        th,
+        td {
             padding: 8px;
             text-align: left;
+            background-color: #f4f4f4;
         }
 
         th {
-            background-color: #f4f4f4;
-        }
-
-        /* Ensure flexibility in layout */
-        @media (max-width: 768px) {
-            form {
-                max-width: 100%;
-                padding: 15px;
-            }
-            button {
-                font-size: 14px;
-            }
+            background-color: #e2e2e2;
         }
     </style>
-    <script>
-        // Tracking previous pick-ups and item details
-        const items = {
-            "4441": { name: "Parle Biscuit", quantity: 10 },
-            "4442": { name: "Amul Butter", quantity: 20 },
-            "4443": { name: "Lay's Chips", quantity: 30 },
-            "4444": { name: "Coca-Cola Can", quantity: 40 },
-            "4445": { name: "Dettol Soap", quantity: 50 },
-            "4446": { name: "Harpic Cleaner", quantity: 60 },
-            "4447": { name: "Samsung Galaxy Mobile", quantity: 70 },
-            "4448": { name: "HP Pavilion Laptop", quantity: 80 },
-            "4449": { name: "Wooden Dining Chair", quantity: 90 },
-            "4450": { name: "Classmate Notebook", quantity: 100 },
-            "4451": { name: "Levi's T-Shirt", quantity: 110 },
-            "4452": { name: "Nike Sports Shoes", quantity: 120 },
-            "4453": { name: "Basmati Rice 1kg", quantity: 130 },
-            "4454": { name: "Vanilla Ice Cream 500ml", quantity: 140 },
-            "4455": { name: "Harry Potter Book", quantity: 150 }
-        };
 
-        // Store pick-up data
-        let pickUpData = [];
-
-        function handleSubmit(event) {
-            event.preventDefault(); // Prevent actual form submission
-
-            // Get form values
-            const itemId = document.querySelector('select[name="item_id"]').value;
-            const pickupQuantity = parseInt(document.querySelector('input[name="pickup_quantity"]').value);
-
-            // Get item details
-            const item = items[itemId];
-            if (item && pickupQuantity <= item.quantity) {
-                // Update the item quantity
-                item.quantity -= pickupQuantity;
-
-                // Store pick-up data for display
-                pickUpData.push({
-                    name: item.name,
-                    id: itemId,
-                    quantity: pickupQuantity
-                });
-
-                // Hide the form after submission
-                document.getElementById('addRackForm').style.display = 'none';
-
-                // Display success message and table
-                displayPickUpDetails();
-            } else {
-                // If invalid pick-up quantity
-                document.getElementById('message').innerHTML = `
-                    <p style="color: red; font-weight: bold;">Invalid Quantity or Insufficient Stock!</p>
-                `;
-            }
-        }
-
-        function displayPickUpDetails() {
-            let html = `
-                <p style="color: green; font-weight: bold;">Form Submitted Successfully!</p>
-                <button onclick="goBack()">Back</button>
-                <table>
-                    <tr>
-                        <th>Item Name</th>
-                        <th>Item ID</th>
-                        <th>Pick-Up Quantity</th>
-                    </tr>`;
-
-            // Loop through pick-up data and display it
-            pickUpData.forEach((data) => {
-                html += `
-                    <tr>
-                        <td>${data.name}</td>
-                        <td>${data.id}</td>
-                        <td>${data.quantity}</td>
-                    </tr>
-                `;
-            });
-
-            html += `</table>`;
-            document.getElementById('message').innerHTML = html;
-        }
-
-        function goBack() {
-            // Show the form again and reset message
-            document.getElementById('addRackForm').style.display = 'block';
-            document.getElementById('message').innerHTML = '';
-        }
-    </script>
 </head>
+
 <body>
     <nav class="navbar">
         <ul>
@@ -234,32 +141,98 @@
     </nav>
 
     <h2>Pick Item from Warehouse</h2>
-    <form action="/pickupItemFromWarehouse" method="POST" id="addRackForm" onsubmit="handleSubmit(event)">
+    <form id="pickItemForm" onsubmit="handleSubmit(event)">
         <label>Item Name:</label>
-        <select name="item_id" required>
-            <option value="4441">Parle Biscuit - 4441</option>
-            <option value="4442">Amul Butter - 4442</option>
-            <option value="4443">Lay's Chips - 4443</option>
-            <option value="4444">Coca-Cola Can - 4444</option>
-            <option value="4445">Dettol Soap - 4445</option>
-            <option value="4446">Harpic Cleaner - 4446</option>
-            <option value="4447">Samsung Galaxy Mobile - 4447</option>
-            <option value="4448">HP Pavilion Laptop - 4448</option>
-            <option value="4449">Wooden Dining Chair - 4449</option>
-            <option value="4450">Classmate Notebook - 4450</option>
-            <option value="4451">Levi's T-Shirt - 4451</option>
-            <option value="4452">Nike Sports Shoes - 4452</option>
-            <option value="4453">Basmati Rice 1kg - 4453</option>
-            <option value="4454">Vanilla Ice Cream 500ml - 4454</option>
-            <option value="4455">Harry Potter Book - 4455</option>
-        </select><br><br>
-        
-        <label>Pick-Up Quantity:</label>
-        <input type="number" name="pickup_quantity" required><br><br>
+        <select name="item_id" id="item_id" required></select>
+
+        <label>Pick Quantity:</label>
+        <input type="number" name="pick_quantity" required>
 
         <button type="submit">Pick Item</button>
     </form>
 
     <div id="message"></div>
+
+    <script>
+        const itemEntries = []; // Array to store all item entries
+
+        // Fetch available items on page load
+        window.onload = function () {
+            fetch('/items') // Ensure this endpoint returns all available items
+                .then(response => response.json())
+                .then(items => {
+                    const itemSelect = document.getElementById("item_id");
+                    items.forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = item.item_id; // Assuming item_id is the unique identifier
+                        option.textContent = item.item_name; // Assuming item_name is the display name
+                        itemSelect.appendChild(option);
+                        itemEntries.push(item); // Store item details for later use
+                    });
+                })
+                .catch(error => console.error('Error fetching items:', error));
+        };
+
+        function handleSubmit(event) {
+            event.preventDefault(); // Prevent actual form submission
+
+            // Retrieve form data
+            const itemId = document.querySelector('[name="item_id"]').value.trim();
+            const pickQuantity = parseInt(document.querySelector('[name="pick_quantity"]').value.trim());
+
+            // Prepare data for server submission
+            const data = {
+                item_id: itemId,
+                item_pick_quantity: pickQuantity,
+                item_name:
+                    document.querySelector('[name="item_id"]').options[document.querySelector('[name="item_id"]').selectedIndex].textContent // Get the selected item's name
+            };
+
+            // Send data to server
+            fetch('/pickUpItem', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.text())
+                .then(message => {
+                    alert('Item picked from warehouse successfully');
+                    displayPickUpDetails(data); // Display pick-up details
+
+                    // Clear form inputs
+                    document.getElementById("pickItemForm").reset(); // Reset form inputs
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error adding item to warehouse');
+                });
+        }
+
+        function displayPickUpDetails(data) {
+            let messageDiv = document.getElementById('message');
+
+            // Check if the table already exists
+            let table = messageDiv.querySelector('table');
+
+            if (!table) {
+                // Create a new table if it doesn't exist
+                table = document.createElement('table');
+                table.innerHTML = `
+                   <tr>
+                       <th>Item Name</th>
+                       <th>Item ID</th>
+                       <th>Picked Quantity</th>
+                   </tr>`;
+                messageDiv.appendChild(table);
+            }
+
+            // Append a new row for each pick-up
+            let newRow = table.insertRow();
+            newRow.insertCell(0).textContent = data.item_name;
+            newRow.insertCell(1).textContent = data.item_id;
+            newRow.insertCell(2).textContent = data.item_pick_quantity;
+        }
+    </script>
 </body>
+
 </html>

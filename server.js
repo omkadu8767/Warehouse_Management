@@ -189,34 +189,34 @@ app.get('/subcategories', (req, res) => {
 
 
 // Transactions (Feature 7, 9, 10)
-app.post('/addTransaction', (req, res) => {
-    const { item_id, transaction_type, quantity } = req.body;
+// app.post('/addTransaction', (req, res) => {
+//     const { item_id, transaction_type, quantity } = req.body;
 
-    if (!item_id || !transaction_type || !quantity) {
-        return res.status(400).send('All fields are required');
-    }
+//     if (!item_id || !transaction_type || !quantity) {
+//         return res.status(400).send('All fields are required');
+//     }
 
-    const sqlTransaction = 'INSERT INTO transactions (item_id, transaction_type, quantity) VALUES (?, ?, ?)';
-    db.query(sqlTransaction, [item_id, transaction_type, quantity], (err) => {
-        if (err) return handleError(err, res, 'Error adding transaction');
+//     const sqlTransaction = 'INSERT INTO transactions (item_id, transaction_type, quantity) VALUES (?, ?, ?)';
+//     db.query(sqlTransaction, [item_id, transaction_type, quantity], (err) => {
+//         if (err) return handleError(err, res, 'Error adding transaction');
 
-        const updateSql =
-            transaction_type === 'ADD'
-                ? 'UPDATE items SET quantity = quantity + ? WHERE item_id = ?'
-                : 'UPDATE items SET quantity = quantity - ? WHERE item_id = ?';
+//         const updateSql =
+//             transaction_type === 'ADD'
+//                 ? 'UPDATE items SET quantity = quantity + ? WHERE item_id = ?'
+//                 : 'UPDATE items SET quantity = quantity - ? WHERE item_id = ?';
 
-        db.query(updateSql, [quantity, item_id], (err) => {
-            if (err) return handleError(err, res, 'Error updating item quantity');
-            res.send('Transaction processed successfully');
-        });
-    });
-});
+//         db.query(updateSql, [quantity, item_id], (err) => {
+//             if (err) return handleError(err, res, 'Error updating item quantity');
+//             res.send('Transaction processed successfully');
+//         });
+//     });
+// });
 
 // Endpoint to add items to the warehouse
 app.post('/addItemToWarehouse', (req, res) => {
-    const { item_id, item_name, item_add_quantity } = req.body;
+    const { item_id, item_add_quantity, item_name } = req.body;
 
-    if (!item_id || !item_name || !item_add_quantity) {
+    if (!item_id || !item_add_quantity || !item_name) {
         return res.status(400).send('All fields are required');
     }
 
@@ -224,29 +224,42 @@ app.post('/addItemToWarehouse', (req, res) => {
         INSERT INTO add_item_to_warehouse (item_id, item_name, item_add_quantity)
         VALUES (?, ?, ?)
     `;
+
     db.query(sql, [item_id, item_name, item_add_quantity], (err) => {
         if (err) {
             console.error('Error adding item to warehouse:', err);
             return res.status(500).send('Error adding item to warehouse');
         }
 
-        // Update item quantity in the main `items` table
+        // Update item quantity in the main items table
         const updateSql = 'UPDATE items SET quantity = quantity + ? WHERE item_id = ?';
+
         db.query(updateSql, [item_add_quantity, item_id], (err) => {
             if (err) {
                 console.error('Error updating item quantity:', err);
                 return res.status(500).send('Error updating item quantity');
             }
+
             res.send('Item added to warehouse successfully');
         });
     });
 });
 
-// Endpoint to pick up items from the warehouse
-app.post('/pickUpItem', (req, res) => {
-    const { item_id, item_name, item_quantity } = req.body;
+// Endpoint to fetch all items
+app.get('/items', (req, res) => {
+    const sql = 'SELECT * FROM items'; // Adjust this query as necessary based on your database structure
+    db.query(sql, (err, results) => {
+        if (err) return handleError(err, res, 'Error fetching items');
 
-    if (!item_id || !item_name || !item_quantity) {
+        res.json(results); // Send items as JSON response
+    });
+});
+
+// Endpoint to add items to the warehouse
+app.post('/pickUpItem', (req, res) => {
+    const { item_id, item_pick_quantity, item_name } = req.body;
+
+    if (!item_id || !item_pick_quantity || !item_name) {
         return res.status(400).send('All fields are required');
     }
 
@@ -254,49 +267,82 @@ app.post('/pickUpItem', (req, res) => {
         INSERT INTO pick_up_item_from_warehouse (item_id, item_name, item_quantity)
         VALUES (?, ?, ?)
     `;
-    db.query(sql, [item_id, item_name, item_quantity], (err) => {
+
+    db.query(sql, [item_id, item_name, item_pick_quantity], (err) => { // Corrected variable name here
         if (err) {
             console.error('Error picking up item from warehouse:', err);
             return res.status(500).send('Error picking up item from warehouse');
         }
 
-        // Update item quantity in the main `items` table
-        const updateSql = 'UPDATE items SET quantity = quantity - ? WHERE item_id = ?';
-        db.query(updateSql, [item_quantity, item_id], (err) => {
+        // Update quantity in main items table
+        const updateSql = 'UPDATE items SET quantity = quantity - ? WHERE item_id = ?'; // Changed to decrement
+
+        db.query(updateSql, [item_pick_quantity, item_id], (err) => {
             if (err) {
                 console.error('Error updating item quantity:', err);
                 return res.status(500).send('Error updating item quantity');
             }
-            res.send('Item picked up from warehouse successfully');
+
+            res.send('Item picked from warehouse successfully'); // Success message returned to client
         });
+    });
+});
+
+
+// Endpoint to handle barcode-based addition
+// Endpoint to fetch items based on barcode
+app.get('/items', (req, res) => {
+    const { barcode } = req.query;
+
+    const sql = 'SELECT * FROM items WHERE barcode_value = ?'; // Adjust this query as necessary based on your database structure
+    db.query(sql, [barcode], (err, results) => {
+        if (err) return handleError(err, res, 'Error fetching items');
+
+        if (results.length > 0) {
+            res.json(results[0]); // Send the first matching item as JSON response
+        } else {
+            res.status(404).send('Item not found');
+        }
     });
 });
 
 // Endpoint to handle barcode-based addition
 app.post('/addItemByBarcode', (req, res) => {
-    const { item_name, item_id, item_quantity, barcode_value } = req.body;
+    const { item_id, item_name, item_quantity, barcode_value } = req.body;
 
-    if (!item_name || !item_id || !item_quantity || !barcode_value) {
+    if (!item_id || !item_name || !item_quantity || !barcode_value) {
         return res.status(400).send('All fields are required');
     }
 
     const sql = `
-        INSERT INTO add_item_to_warehouse_by_barcode_scanning (item_name, item_id, item_quantity, barcode_value)
+        INSERT INTO add_item_to_warehouse_by_barcode_scanning (item_id, item_name, item_quantity, barcode_value)
         VALUES (?, ?, ?, ?)
     `;
-    db.query(sql, [item_name, item_id, item_quantity, barcode_value], (err, result) => {
+
+    db.query(sql, [item_id, item_name, item_quantity, barcode_value], (err) => {
         if (err) {
             console.error('Error adding item by barcode:', err);
             return res.status(500).send('Error adding item by barcode');
         }
 
-        res.json({
-            message: 'Item added to warehouse by barcode successfully',
-            transaction_id: result.insertId,
-            transaction_date: new Date().toISOString()
+        // Update quantity in items table
+        const updateSql = 'UPDATE items SET quantity = quantity + ? WHERE item_id = ?';
+
+        db.query(updateSql, [item_quantity, item_id], (err) => {
+            if (err) {
+                console.error('Error updating item quantity:', err);
+                return res.status(500).send('Error updating item quantity');
+            }
+
+            res.json({
+                message: 'Item added to warehouse by barcode successfully',
+            });
         });
     });
 });
+
+
+
 
 app.post('/pickUpItemByBarcode', (req, res) => {
     const { barcode_value, item_quantity, item_id, item_name } = req.body;
