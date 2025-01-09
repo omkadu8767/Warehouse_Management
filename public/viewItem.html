@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>View Items</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEVhgc0zbiNruYRh-64g3RJCiH7kr7IgbU-Q&s.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        nav {
+            background-color: black;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        nav ul li {
+            float: left;
+        }
+
+        nav ul li a {
+            display: block;
+            color: greenyellow;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            background-color: green;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 100px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e2e2e2;
+        }
+
+        button {
+            margin: 20px auto;
+            display: block;
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="./addrack.html">Add Rack</a></li>
+            <li><a href="./viewrack.html">View Rack</a></li>
+            <li><a href="./addcategory.html">Add Category</a></li>
+            <li><a href="./subcategory.html">Add Subcategory</a></li>
+            <li><a href="./item.html">Define Item</a></li>
+            <li><a href="./viewItem.html">View Item</a></li>
+            <li><a href="./additem.html">Add Item to WareHouse</a></li>
+            <li><a href="./additembarcode.html">Add Item by Barcode</a></li>
+            <li><a href="./pickitem.html">Pick Item</a></li>
+            <li><a href="./pickitembarcode.html">Pick Item by Barcode</a></li>
+        </ul>
+    </nav>
+
+    <h2>View Items</h2>
+
+    <button onclick="fetchAndDisplayItems()">View Items</button>
+
+    <table id="itemsTable">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Item Name</th>
+                <th>Added Quantity</th>
+                <th>Picked Quantity</th>
+                <th>Available Quantity</th>
+                <th>Unit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Dynamic rows will be added here -->
+        </tbody>
+    </table>
+
+    <script>
+        let items = {};
+
+        function fetchAndDisplayItems() {
+            fetch('/items') // Endpoint to fetch all item data
+                .then(response => response.json())
+                .then(data => {
+                    // Process the fetched items
+                    data.forEach(item => {
+                        if (!items[item.item_id]) {
+                            items[item.item_id] = {
+                                item_id: item.item_id,
+                                item_name: item.item_name,
+                                added_quantity: 0,
+                                picked_quantity: 0,
+                                unit: item.unit || 'N/A'
+                            };
+                        }
+                        items[item.item_id].added_quantity += item.added_quantity || 0;
+                        items[item.item_id].picked_quantity += item.picked_quantity || 0;
+                    });
+                    displayItems();
+                })
+                .catch(error => console.error('Error fetching items:', error));
+        }
+
+        function displayItems() {
+            const tableBody = document.getElementById('itemsTable').querySelector('tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            Object.values(items).forEach(item => {
+                const availableQuantity = item.added_quantity - item.picked_quantity;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.item_id}</td>
+                    <td>${item.item_name}</td>
+                    <td>${item.added_quantity}</td>
+                    <td>${item.picked_quantity}</td>
+                    <td>${availableQuantity}</td>
+                    <td>${item.unit}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        fetchAndDisplayItems(); // Fetch and display items on page load
+    </script>
+
+</body>
+
+</html>
