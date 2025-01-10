@@ -146,7 +146,18 @@ The server will run on `http://localhost:3000` by default.
      `transaction_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
      PRIMARY KEY (`id`)
    ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+   CREATE TABLE `orders` (
+     `order_id` varchar(20) NOT NULL,
+     `price` decimal(10,2) NOT NULL,
+     `item_name` varchar(255) NOT NULL,
+     `order_date` date NOT NULL,
+     `order_time` time NOT NULL,
+     PRIMARY KEY (order_id)
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4    COLLATE=utf8mb4_0900_ai_ci;
    ```
+
+   
 
 3. Import these tables into your database management tool (e.g., MySQL Workbench, phpMyAdmin).
 
