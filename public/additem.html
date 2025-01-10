@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Item to Warehouse</title>
-     <style>
+    <style>
         /* General styling */
         body {
             font-family: Arial, sans-serif;
@@ -152,6 +152,8 @@
             <li><a href="./additembarcode.html">Add Item by Barcode</a></li>
             <li><a href="./pickitem.html">Pick Item</a></li>
             <li><a href="./pickitembarcode.html">Pick Item by Barcode</a></li>
+            <li><a href="./Products/order.html">Products</a></li>
+
         </ul>
     </nav>
 
@@ -225,7 +227,7 @@
                 .then(data => {
                     alert(data); // Show success or error message
                     if (data === 'Item added to warehouse successfully') { // If the response was successful
-                       const table = document.getElementById("itemTable").querySelector("tbody");
+                        const table = document.getElementById("itemTable").querySelector("tbody");
                         const newRow = table.insertRow();
                         newRow.insertCell(0).textContent = document.querySelector('[name="item_id"]').options[document.querySelector('[name="item_id"]').selectedIndex].textContent; // Displaying selected item name
                         newRow.insertCell(1).textContent = addQuantity; // Displaying quantity added

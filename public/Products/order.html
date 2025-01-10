@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Selection</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Menu bar styling */
+        nav {
+            background-color: #333;
+            /* Dark background color for menu */
+            position: fixed;
+            /* Fix the menu to the top */
+            width: 100%;
+            /* Full-width menu */
+            top: 0;
+            /* Sticks to the top */
+            left: 0;
+            z-index: 1000;
+            /* Ensures menu is always on top */
+        }
+
+        nav ul {
+            list-style-type: none;
+            /* Remove default list styling */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            /* Clear floating elements */
+        }
+
+        nav ul li {
+            float: left;
+            /* Align menu items horizontally */
+        }
+
+        nav ul li a {
+            display: block;
+            color: greenyellow;
+            /* Text color */
+            text-align: center;
+            padding: 14px 20px;
+            /* Padding inside menu items */
+            text-decoration: none;
+            /* Remove underline from links */
+        }
+
+        nav ul li a:hover {
+            background-color: green;
+            /* Hover effect for menu items */
+        }
+
+        body {
+            margin: 0;
+            /* Remove default body margin */
+            padding-top: 50px;
+            /* Add padding so content doesn't overlap with fixed menu */
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Product Selection</h1>
+        <nav class="navbar">
+            <ul>
+                <li><a href="order.html">Order</a></li>
+                <li><a href="cart.html">Cart (<span id="cart-count">0</span>)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Products</h2>
+        <!-- Filters for Category and Name -->
+        <div class="filter-search">
+            <label for="category-filter">Filter by Category:</label>
+            <select id="category-filter">
+                <option value="">All</option>
+                <option value="toothpaste">Toothpaste</option>
+                <option value="mint">Mint</option>
+                <option value="soap">Soap</option>
+                <option value="shampoo">Shampoo</option>
+                <option value="conditioner">Conditioner</option>
+                <option value="lotion">Lotion</option>
+                <option value="deodorant">Deodorant</option>
+                <option value="toothbrush">Toothbrush</option>
+                <option value="facewash">Face Wash</option>
+                <option value="handwash">Hand Wash</option>
+                <option value="bodywash">Body Wash</option>
+                <option value="sunscreen">Sunscreen</option>
+                <option value="moisturizer">Moisturizer</option>
+                <option value="perfume">Perfume</option>
+                <option value="nailpolish">Nail Polish</option>
+                <option value="facecream">Face Cream</option>
+                <option value="makeupremover">Makeup Remover</option>
+                <option value="eyecream">Eye Cream</option>
+                <option value="lipbalm">Lip Balm</option>
+                <option value="hairgel">Hair Gel</option>
+            </select>
+            <label for="name-filter">Search by Name:</label>
+            <select id="name-filter">
+                <option value="">All</option>
+                <option value="Colgate Toothpaste">Colgate Toothpaste</option>
+                <option value="Pepsodent Toothpaste">Pepsodent Toothpaste</option>
+                <option value="Sensodyne Toothpaste">Sensodyne Toothpaste</option>
+                <option value="Patanjali Toothpaste">Patanjali Toothpaste</option>
+                <option value="Close-Up Toothpaste">Close-Up Toothpaste</option>
+                <option value="Dabur Red Toothpaste">Dabur Red Toothpaste</option>
+                <option value="Meswak Toothpaste">Meswak Toothpaste</option>
+                <option value="Oral-B Toothpaste">Oral-B Toothpaste</option>
+                <option value="Aquafresh Toothpaste">Aquafresh Toothpaste</option>
+                <option value="Biotique Toothpaste">Biotique Toothpaste</option>
+                <option value="Himalaya Toothpaste">Himalaya Toothpaste</option>
+                <option value="Vicco Vajradanti Toothpaste">Vicco Vajradanti Toothpaste</option>
+                <option value="Dant Kanti Toothpaste">Dant Kanti Toothpaste</option>
+                <option value="Anchor Toothpaste">Anchor Toothpaste</option>
+                <option value="Babool Toothpaste">Babool Toothpaste</option>
+                <option value="Neem Toothpaste">Neem Toothpaste</option>
+                <option value="Colgate Herbal Toothpaste">Colgate Herbal Toothpaste</option>
+                <option value="Pepsodent Germicheck Toothpaste">Pepsodent Germicheck Toothpaste</option>
+                <option value="Set Wet Style Casual Hair Gel">Set Wet Style Casual Hair Gel</option>
+                <option value="Gatsby Water Gloss Hair Gel">Gatsby Water Gloss Hair Gel</option>
+                <option value="Schwarzkopf Taft Power Hair Gel">Schwarzkopf Taft Power Hair Gel</option>
+                <option value="L'Oreal Paris Studio Line Hair Gel">L'Oreal Paris Studio Line Hair Gel</option>
+                <option value="Beardo Strong Hold Hair Gel">Beardo Strong Hold Hair Gel</option>
+                <option value="Park Avenue Styling Hair Gel">Park Avenue Styling Hair Gel</option>
+                <option value="Brylcreem Wet Look Hair Gel">Brylcreem Wet Look Hair Gel</option>
+                <option value="Set Wet Style Cool Hold Gel">Set Wet Style Cool Hold Gel</option>
+                <option value="Man Arden Hair Fiber Gel">Man Arden Hair Fiber Gel</option>
+                <option value="Ustraa Strong Hold Hair Gel">Ustraa Strong Hold Hair Gel</option>
+                <option value="Enliven Pro-Vitamin Hair Gel">Enliven Pro-Vitamin Hair Gel</option>
+                <option value="Arata Organic Hair Gel">Arata Organic Hair Gel</option>
+                <option value="TIGI Bed Head Hair Gel">TIGI Bed Head Hair Gel</option>
+                <option value="American Crew Firm Hold Styling Gel">American Crew Firm Hold Styling Gel</option>
+                <option value="Paul Mitchell Super Clean Hair Gel">Paul Mitchell Super Clean Hair Gel</option>
+                <!-- Add the remaining products here -->
+            </select>
+        </div>
+
+
+
+
+        <div id="product-list" class="product-list">
+            <!-- Product items will be dynamically loaded here by JavaScript -->
+        </div>
+    </main>
+
+    <script>
+        const products = [
+            // Toothpaste
+
+            { id: 21, title: "Mint Mouthwash", price: 50, category: "mint", stock: 50, quantity: 250, unit: "ml" },
+            { id: 41, title: "Lux Soap", price: 30, category: "soap", stock: 60, quantity: 125, unit: "gm" },
+            { id: 61, title: "Pantene Shampoo", price: 120, category: "shampoo", stock: 80, quantity: 200, unit: "ml" },
+            { id: 71, title: "Pantene Conditioner", price: 150, category: "conditioner", stock: 90, quantity: 180, unit: "ml" },
+            { id: 1, title: "Colgate Toothpaste", price: 100, category: "toothpaste", stock: 30, quantity: 100, unit: "gm" },
+            { id: 2, title: "Pepsodent Toothpaste", price: 90, category: "toothpaste", stock: 40, quantity: 75, unit: "gm" },
+            { id: 3, title: "Sensodyne Toothpaste", price: 120, category: "toothpaste", stock: 35, quantity: 90, unit: "gm" },
+            { id: 4, title: "Patanjali Toothpaste", price: 80, category: "toothpaste", stock: 50, quantity: 110, unit: "gm" },
+            { id: 5, title: "Close-Up Toothpaste", price: 70, category: "toothpaste", stock: 20, quantity: 100, unit: "gm" },
+            { id: 6, title: "Dabur Red Toothpaste", price: 110, category: "toothpaste", stock: 60, quantity: 120, unit: "gm" },
+            { id: 7, title: "Meswak Toothpaste", price: 95, category: "toothpaste", stock: 45, quantity: 85, unit: "gm" },
+            { id: 8, title: "Oral-B Toothpaste", price: 130, category: "toothpaste", stock: 25, quantity: 150, unit: "gm" },
+            { id: 9, title: "Aquafresh Toothpaste", price: 85, category: "toothpaste", stock: 50, quantity: 90, unit: "gm" },
+            { id: 10, title: "Biotique Toothpaste", price: 100, category: "toothpaste", stock: 40, quantity: 110, unit: "gm" },
+            { id: 11, title: "Himalaya Toothpaste", price: 90, category: "toothpaste", stock: 55, quantity: 80, unit: "gm" },
+            { id: 12, title: "Vicco Vajradanti Toothpaste", price: 105, category: "toothpaste", stock: 30, quantity: 95, unit: "gm" },
+            { id: 13, title: "Dant Kanti Toothpaste", price: 80, category: "toothpaste", stock: 40, quantity: 100, unit: "gm" },
+            { id: 14, title: "Anchor Toothpaste", price: 75, category: "toothpaste", stock: 60, quantity: 105, unit: "gm" },
+            { id: 15, title: "Babool Toothpaste", price: 65, category: "toothpaste", stock: 45, quantity: 115, unit: "gm" },
+            { id: 16, title: "Neem Toothpaste", price: 85, category: "toothpaste", stock: 50, quantity: 100, unit: "gm" },
+            { id: 17, title: "Colgate Herbal Toothpaste", price: 100, category: "toothpaste", stock: 40, quantity: 90, unit: "gm" },
+            { id: 18, title: "Pepsodent Germicheck Toothpaste", price: 95, category: "toothpaste", stock: 55, quantity: 80, unit: "gm" },
+            { id: 19, title: "Sensodyne Fresh Mint Toothpaste", price: 120, category: "toothpaste", stock: 60, quantity: 110, unit: "gm" },
+            { id: 20, title: "Colgate MaxFresh Toothpaste", price: 110, category: "toothpaste", stock: 50, quantity: 100, unit: "gm" },
+
+            // Mint
+            { id: 21, title: "Mint Mouthwash", price: 50, category: "mint", stock: 50, quantity: 250, unit: "ml" },
+            { id: 22, title: "Freshmint Spray", price: 70, category: "mint", stock: 45, quantity: 200, unit: "ml" },
+            { id: 23, title: "Tic Tac Freshmint", price: 40, category: "mint", stock: 60, quantity: 100, unit: "gm" },
+            { id: 24, title: "Altoids Mints", price: 60, category: "mint", stock: 55, quantity: 50, unit: "gm" },
+            { id: 25, title: "Breath Savers Mints", price: 45, category: "mint", stock: 50, quantity: 75, unit: "gm" },
+            { id: 26, title: "Ice Breakers Mints", price: 50, category: "mint", stock: 45, quantity: 150, unit: "gm" },
+            { id: 27, title: "Mentos Mints", price: 35, category: "mint", stock: 40, quantity: 200, unit: "gm" },
+            { id: 28, title: "Lifesavers Mints", price: 55, category: "mint", stock: 60, quantity: 300, unit: "gm" },
+            { id: 29, title: "Orbit Mints", price: 40, category: "mint", stock: 50, quantity: 80, unit: "gm" },
+            { id: 30, title: "Extra Refreshers Mints", price: 65, category: "mint", stock: 45, quantity: 60, unit: "gm" },
+            { id: 31, title: "Wintergreen Altoids", price: 60, category: "mint", stock: 40, quantity: 90, unit: "gm" },
+            { id: 32, title: "Peppermint Altoids", price: 60, category: "mint", stock: 55, quantity: 75, unit: "gm" },
+            { id: 33, title: "Doublemint Gum", price: 30, category: "mint", stock: 70, quantity: 150, unit: "gm" },
+            { id: 34, title: "Freshmint Chewing Gum", price: 25, category: "mint", stock: 80, quantity: 200, unit: "gm" },
+            { id: 35, title: "Spearmint Chewing Gum", price: 35, category: "mint", stock: 65, quantity: 250, unit: "gm" },
+            { id: 36, title: "Fisherman's Friend Mints", price: 50, category: "mint", stock: 45, quantity: 100, unit: "gm" },
+            { id: 37, title: "Sugar-Free Mints", price: 40, category: "mint", stock: 55, quantity: 75, unit: "gm" },
+            { id: 38, title: "Mint Candy", price: 45, category: "mint", stock: 60, quantity: 200, unit: "gm" },
+            { id: 39, title: "Trident Mint Gum", price: 50, category: "mint", stock: 50, quantity: 150, unit: "gm" },
+            { id: 40, title: "Gum Freshmint", price: 55, category: "mint", stock: 45, quantity: 100, unit: "gm" },
+
+            // Soap
+            { id: 41, title: "Lux Soap", price: 30, category: "soap", stock: 60, quantity: 125, unit: "gm" },
+            { id: 42, title: "Dove Soap", price: 40, category: "soap", stock: 55, quantity: 100, unit: "gm" },
+            { id: 43, title: "Pears Soap", price: 50, category: "soap", stock: 50, quantity: 150, unit: "gm" },
+            { id: 44, title: "Lifebuoy Soap", price: 35, category: "soap", stock: 40, quantity: 100, unit: "gm" },
+            { id: 45, title: "Dettol Soap", price: 45, category: "soap", stock: 45, quantity: 120, unit: "gm" },
+            { id: 46, title: "Santoor Soap", price: 25, category: "soap", stock: 50, quantity: 90, unit: "gm" },
+            { id: 47, title: "Cinthol Soap", price: 35, category: "soap", stock: 60, quantity: 110, unit: "gm" },
+            { id: 48, title: "Medimix Soap", price: 30, category: "soap", stock: 45, quantity: 125, unit: "gm" },
+            { id: 49, title: "Mysore Sandal Soap", price: 55, category: "soap", stock: 50, quantity: 80, unit: "gm" },
+            { id: 50, title: "Johnson's Baby Soap", price: 40, category: "soap", stock: 60, quantity: 150, unit: "gm" },
+            { id: 51, title: "Fiama Soap", price: 60, category: "soap", stock: 55, quantity: 100, unit: "gm" },
+            { id: 52, title: "Hamam Soap", price: 25, category: "soap", stock: 60, quantity: 90, unit: "gm" },
+            { id: 53, title: "Godrej No.1 Soap", price: 20, category: "soap", stock: 70, quantity: 150, unit: "gm" },
+            { id: 54, title: "Savlon Soap", price: 45, category: "soap", stock: 50, quantity: 120, unit: "gm" },
+            { id: 55, title: "Nivea Soap", price: 50, category: "soap", stock: 40, quantity: 100, unit: "gm" },
+            { id: 56, title: "Ayush Soap", price: 35, category: "soap", stock: 60, quantity: 110, unit: "gm" },
+            { id: 57, title: "Patanjali Soap", price: 30, category: "soap", stock: 65, quantity: 95, unit: "gm" },
+            { id: 58, title: "Vivel Soap", price: 30, category: "soap", stock: 55, quantity: 100, unit: "gm" },
+            { id: 59, title: "Chandrika Soap", price: 25, category: "soap", stock: 50, quantity: 125, unit: "gm" },
+            { id: 60, title: "Margo Soap", price: 20, category: "soap", stock: 40, quantity: 100, unit: "gm" },
+
+            // Shampoo
+            { id: 61, title: "Pantene Shampoo", price: 120, category: "shampoo", stock: 80, quantity: 200, unit: "ml" },
+            { id: 62, title: "Head & Shoulders Shampoo", price: 130, category: "shampoo", stock: 90, quantity: 150, unit: "ml" },
+            { id: 63, title: "Dove Shampoo", price: 110, category: "shampoo", stock: 70, quantity: 180, unit: "ml" },
+            { id: 64, title: "Sunsilk Shampoo", price: 90, category: "shampoo", stock: 50, quantity: 250, unit: "ml" },
+            { id: 65, title: "Tresemme Shampoo", price: 140, category: "shampoo", stock: 60, quantity: 200, unit: "ml" },
+            { id: 66, title: "Himalaya Shampoo", price: 100, category: "shampoo", stock: 75, quantity: 220, unit: "ml" },
+            { id: 67, title: "Clinic Plus Shampoo", price: 80, category: "shampoo", stock: 50, quantity: 250, unit: "ml" },
+            { id: 68, title: "Biotique Shampoo", price: 110, category: "shampoo", stock: 40, quantity: 200, unit: "ml" },
+            { id: 69, title: "Garnier Shampoo", price: 95, category: "shampoo", stock: 55, quantity: 180, unit: "ml" },
+            { id: 70, title: "VLCC Shampoo", price: 105, category: "shampoo", stock: 70, quantity: 200, unit: "ml" },
+            { id: 71, title: "Pantene Conditioner", price: 150, category: "conditioner", stock: 90, quantity: 180, unit: "ml" },
+            { id: 72, title: "Dove Conditioner", price: 130, category: "conditioner", stock: 85, quantity: 200, unit: "ml" },
+            { id: 73, title: "Tresemme Conditioner", price: 160, category: "conditioner", stock: 60, quantity: 200, unit: "ml" },
+            { id: 74, title: "Sunsilk Conditioner", price: 120, category: "conditioner", stock: 50, quantity: 180, unit: "ml" },
+            { id: 75, title: "L'Oreal Conditioner", price: 140, category: "conditioner", stock: 65, quantity: 180, unit: "ml" },
+            { id: 76, title: "Head & Shoulders Conditioner", price: 135, category: "conditioner", stock: 70, quantity: 200, unit: "ml" },
+            { id: 77, title: "Herbal Essences Conditioner", price: 125, category: "conditioner", stock: 75, quantity: 200, unit: "ml" },
+            { id: 78, title: "Himalaya Conditioner", price: 115, category: "conditioner", stock: 80, quantity: 180, unit: "ml" },
+            { id: 79, title: "Biotique Conditioner", price: 110, category: "conditioner", stock: 90, quantity: 180, unit: "ml" },
+            { id: 80, title: "Garnier Conditioner", price: 120, category: "conditioner", stock: 85, quantity: 180, unit: "ml" },
+            { id: 101, title: "Vaseline Intensive Care Lotion", price: 150, category: "lotion", stock: 100, quantity: 200, unit: "ml" },
+            { id: 102, title: "Nivea Body Lotion", price: 200, category: "lotion", stock: 90, quantity: 200, unit: "ml" },
+            { id: 103, title: "Pond's Body Lotion", price: 180, category: "lotion", stock: 85, quantity: 200, unit: "ml" },
+            { id: 104, title: "Dove Nourishing Lotion", price: 220, category: "lotion", stock: 75, quantity: 200, unit: "ml" },
+            { id: 105, title: "Jergens Moisturizing Lotion", price: 250, category: "lotion", stock: 80, quantity: 250, unit: "ml" },
+            { id: 106, title: "Aveeno Daily Moisturizing Lotion", price: 300, category: "lotion", stock: 70, quantity: 250, unit: "ml" },
+            { id: 107, title: "CeraVe Moisturizing Lotion", price: 320, category: "lotion", stock: 65, quantity: 250, unit: "ml" },
+            { id: 108, title: "Cetaphil Lotion", price: 280, category: "lotion", stock: 90, quantity: 250, unit: "ml" },
+            { id: 109, title: "Biotique Bio Morning Nectar Lotion", price: 190, category: "lotion", stock: 100, quantity: 200, unit: "ml" },
+            { id: 110, title: "Lotus Herbals Body Lotion", price: 210, category: "lotion", stock: 75, quantity: 200, unit: "ml" },
+            { id: 111, title: "Lakme Peach Milk Lotion", price: 170, category: "lotion", stock: 80, quantity: 200, unit: "ml" },
+            { id: 112, title: "Himalaya Cocoa Butter Intensive Lotion", price: 160, category: "lotion", stock: 85, quantity: 200, unit: "ml" },
+            { id: 113, title: "The Body Shop Shea Butter Lotion", price: 350, category: "lotion", stock: 60, quantity: 250, unit: "ml" },
+            { id: 114, title: "VLCC Almond Honey Body Lotion", price: 190, category: "lotion", stock: 90, quantity: 250, unit: "ml" },
+            { id: 115, title: "Parachute Advanced Body Lotion", price: 140, category: "lotion", stock: 95, quantity: 200, unit: "ml" },
+            { id: 116, title: "Nivea Men Deodorant", price: 150, category: "deodorant", stock: 100, quantity: 150, unit: "ml" },
+            { id: 117, title: "Dove Original Deodorant", price: 180, category: "deodorant", stock: 90, quantity: 150, unit: "ml" },
+            { id: 118, title: "Axe Body Spray", price: 220, category: "deodorant", stock: 80, quantity: 150, unit: "ml" },
+            { id: 119, title: "Old Spice Deodorant", price: 200, category: "deodorant", stock: 85, quantity: 150, unit: "ml" },
+            { id: 120, title: "Rexona Women Deodorant", price: 160, category: "deodorant", stock: 90, quantity: 150, unit: "ml" },
+            { id: 121, title: "Secret Invisible Solid Deodorant", price: 230, category: "deodorant", stock: 70, quantity: 150, unit: "ml" },
+            { id: 122, title: "Degree Men Deodorant", price: 190, category: "deodorant", stock: 80, quantity: 150, unit: "ml" },
+            { id: 123, title: "Adidas Dynamic Pulse Deodorant", price: 210, category: "deodorant", stock: 75, quantity: 150, unit: "ml" },
+            { id: 124, title: "Nivea Fresh Natural Deodorant", price: 170, category: "deodorant", stock: 90, quantity: 150, unit: "ml" },
+            { id: 125, title: "Fogg Fresh Aqua Deodorant", price: 140, category: "deodorant", stock: 100, quantity: 150, unit: "ml" },
+            { id: 126, title: "Yardley London Deodorant", price: 250, category: "deodorant", stock: 60, quantity: 150, unit: "ml" },
+            { id: 127, title: "Calvin Klein Deodorant", price: 300, category: "deodorant", stock: 65, quantity: 150, unit: "ml" },
+            { id: 128, title: "Brut Deodorant", price: 180, category: "deodorant", stock: 80, quantity: 150, unit: "ml" },
+            { id: 129, title: "Paco Rabanne Deodorant", price: 350, category: "deodorant", stock: 55, quantity: 150, unit: "ml" },
+            { id: 130, title: "Versace Deodorant", price: 380, category: "deodorant", stock: 50, quantity: 150, unit: "ml" },
+            { id: 131, title: "Oral-B Pro Toothbrush", price: 50, category: "toothbrush", stock: 100, quantity: 1, unit: "pc" },
+            { id: 132, title: "Colgate Slim Soft Toothbrush", price: 40, category: "toothbrush", stock: 90, quantity: 1, unit: "pc" },
+            { id: 133, title: "Sensodyne Soft Toothbrush", price: 60, category: "toothbrush", stock: 85, quantity: 1, unit: "pc" },
+            { id: 134, title: "Patanjali Herbal Toothbrush", price: 25, category: "toothbrush", stock: 120, quantity: 1, unit: "pc" },
+            { id: 135, title: "Close-Up Toothbrush", price: 30, category: "toothbrush", stock: 100, quantity: 1, unit: "pc" },
+            { id: 136, title: "Aquafresh Triple Protection Toothbrush", price: 70, category: "toothbrush", stock: 80, quantity: 1, unit: "pc" },
+            { id: 137, title: "Dr. Fresh Toothbrush", price: 20, category: "toothbrush", stock: 130, quantity: 1, unit: "pc" },
+            { id: 138, title: "Biotique Bio Neem Toothbrush", price: 80, category: "toothbrush", stock: 75, quantity: 1, unit: "pc" },
+            { id: 139, title: "Himalaya Extra Soft Toothbrush", price: 45, category: "toothbrush", stock: 95, quantity: 1, unit: "pc" },
+            { id: 140, title: "Dabur Red Toothbrush", price: 55, category: "toothbrush", stock: 90, quantity: 1, unit: "pc" },
+            { id: 141, title: "Vicco Vajradanti Toothbrush", price: 65, category: "toothbrush", stock: 80, quantity: 1, unit: "pc" },
+            { id: 142, title: "Pepsodent Triple Clean Toothbrush", price: 35, category: "toothbrush", stock: 120, quantity: 1, unit: "pc" },
+            { id: 143, title: "Philips Sonicare Electric Toothbrush", price: 3000, category: "toothbrush", stock: 30, quantity: 1, unit: "pc" },
+            { id: 144, title: "Fairywill Electric Toothbrush", price: 2500, category: "toothbrush", stock: 25, quantity: 1, unit: "pc" },
+            { id: 145, title: "Oral-B Electric Toothbrush", price: 3500, category: "toothbrush", stock: 20, quantity: 1, unit: "pc" },
+            { id: 146, title: "Himalaya Neem Face Wash", price: 120, category: "facewash", stock: 100, quantity: 100, unit: "gm" },
+            { id: 147, title: "Pond's Pure White Face Wash", price: 150, category: "facewash", stock: 90, quantity: 100, unit: "gm" },
+            { id: 148, title: "Garnier Men Oil Clear Face Wash", price: 170, category: "facewash", stock: 80, quantity: 100, unit: "gm" },
+            { id: 149, title: "Dove Beauty Moisture Face Wash", price: 140, category: "facewash", stock: 85, quantity: 100, unit: "gm" },
+            { id: 150, title: "Clean & Clear Foaming Face Wash", price: 110, category: "facewash", stock: 90, quantity: 100, unit: "gm" },
+            { id: 151, title: "Biotique Bio Honey Gel Face Wash", price: 180, category: "facewash", stock: 70, quantity: 100, unit: "gm" },
+            { id: 152, title: "Cetaphil Gentle Skin Cleanser", price: 220, category: "facewash", stock: 65, quantity: 100, unit: "gm" },
+            { id: 153, title: "Lakme Blush & Glow Face Wash", price: 130, category: "facewash", stock: 75, quantity: 100, unit: "gm" },
+            { id: 154, title: "Lotus Herbals Tea Tree Face Wash", price: 160, category: "facewash", stock: 80, quantity: 100, unit: "gm" },
+            { id: 155, title: "Neutrogena Deep Clean Face Wash", price: 200, category: "facewash", stock: 60, quantity: 100, unit: "gm" },
+            { id: 156, title: "Mamaearth Ubtan Face Wash", price: 210, category: "facewash", stock: 55, quantity: 100, unit: "gm" },
+            { id: 157, title: "L'Oreal Paris Face Wash", price: 190, category: "facewash", stock: 65, quantity: 100, unit: "gm" },
+            { id: 158, title: "Nivea Men Face Wash", price: 175, category: "facewash", stock: 70, quantity: 100, unit: "gm" },
+            { id: 159, title: "Patanjali Saundarya Face Wash", price: 100, category: "facewash", stock: 85, quantity: 100, unit: "gm" },
+            { id: 160, title: "WOW Skin Science Face Wash", price: 230, category: "facewash", stock: 60, quantity: 100, unit: "gm" },
+
+            // Hand Wash
+            { id: 161, title: "Dettol Hand Wash", price: 80, category: "handwash", stock: 100, quantity: 250, unit: "ml" },
+            { id: 162, title: "Lifebuoy Total Hand Wash", price: 75, category: "handwash", stock: 120, quantity: 250, unit: "ml" },
+            { id: 163, title: "Himalaya Herbal Hand Wash", price: 90, category: "handwash", stock: 85, quantity: 250, unit: "ml" },
+            { id: 164, title: "Patanjali Herbal Hand Wash", price: 65, category: "handwash", stock: 110, quantity: 250, unit: "ml" },
+            { id: 165, title: "Palmolive Naturals Hand Wash", price: 100, category: "handwash", stock: 90, quantity: 250, unit: "ml" },
+            { id: 166, title: "Savlon Herbal Sensitive Hand Wash", price: 85, category: "handwash", stock: 95, quantity: 250, unit: "ml" },
+            { id: 167, title: "Godrej Protekt Hand Wash", price: 110, category: "handwash", stock: 75, quantity: 250, unit: "ml" },
+            { id: 168, title: "Biotique Bio Tulsi Hand Wash", price: 95, category: "handwash", stock: 80, quantity: 250, unit: "ml" },
+            { id: 169, title: "Mamaearth Hand Wash", price: 120, category: "handwash", stock: 60, quantity: 250, unit: "ml" },
+            { id: 170, title: "Lux Soft Touch Hand Wash", price: 105, category: "handwash", stock: 100, quantity: 250, unit: "ml" },
+            { id: 171, title: "L'Oreal Professional Hand Wash", price: 130, category: "handwash", stock: 70, quantity: 250, unit: "ml" },
+            { id: 172, title: "Dove Hand Wash", price: 115, category: "handwash", stock: 65, quantity: 250, unit: "ml" },
+            { id: 173, title: "VLCC Hand Wash", price: 90, category: "handwash", stock: 85, quantity: 250, unit: "ml" },
+            { id: 174, title: "Parachute Advansed Hand Wash", price: 80, category: "handwash", stock: 100, quantity: 250, unit: "ml" },
+            { id: 175, title: "Medimix Ayurvedic Hand Wash", price: 100, category: "handwash", stock: 90, quantity: 250, unit: "ml" },
+
+            // Body Wash
+            { id: 176, title: "Dove Deep Moisture Body Wash", price: 250, category: "bodywash", stock: 60, quantity: 500, unit: "ml" },
+            { id: 177, title: "Nivea Powerfruit Fresh Body Wash", price: 220, category: "bodywash", stock: 65, quantity: 500, unit: "ml" },
+            { id: 178, title: "The Body Shop Shea Shower Cream", price: 350, category: "bodywash", stock: 50, quantity: 500, unit: "ml" },
+            { id: 179, title: "Palmolive Aroma Therapy Body Wash", price: 200, category: "bodywash", stock: 80, quantity: 500, unit: "ml" },
+            { id: 180, title: "Lux Soft Touch Body Wash", price: 180, category: "bodywash", stock: 100, quantity: 500, unit: "ml" },
+            { id: 181, title: "Biotique Bio Apricot Body Wash", price: 160, category: "bodywash", stock: 70, quantity: 500, unit: "ml" },
+            { id: 182, title: "Pears Pure & Gentle Body Wash", price: 190, category: "bodywash", stock: 85, quantity: 500, unit: "ml" },
+            { id: 183, title: "VLCC Almond Honey Body Wash", price: 170, category: "bodywash", stock: 90, quantity: 500, unit: "ml" },
+            { id: 184, title: "Himalaya Refreshing Body Wash", price: 130, category: "bodywash", stock: 100, quantity: 500, unit: "ml" },
+            { id: 185, title: "Axe Dark Temptation Body Wash", price: 210, category: "bodywash", stock: 60, quantity: 500, unit: "ml" },
+            { id: 186, title: "Old Spice Fresh Body Wash", price: 230, category: "bodywash", stock: 75, quantity: 500, unit: "ml" },
+            { id: 187, title: "Mamaearth Vitamin C Body Wash", price: 300, category: "bodywash", stock: 55, quantity: 500, unit: "ml" },
+            { id: 188, title: "Cetaphil Ultra Gentle Body Wash", price: 270, category: "bodywash", stock: 60, quantity: 500, unit: "ml" },
+            { id: 189, title: "Fiama Gel Bar Body Wash", price: 160, category: "bodywash", stock: 95, quantity: 500, unit: "ml" },
+            { id: 190, title: "Khadi Natural Herbal Body Wash", price: 140, category: "bodywash", stock: 90, quantity: 500, unit: "ml" },
+
+            // Sunscreen
+            { id: 191, title: "Neutrogena Ultra Sheer Sunscreen", price: 350, category: "sunscreen", stock: 80, quantity: 100, unit: "ml" },
+            { id: 192, title: "Lotus Herbals Safe Sun Sunscreen", price: 320, category: "sunscreen", stock: 100, quantity: 100, unit: "ml" },
+            { id: 193, title: "Lakme Sun Expert SPF 50 Sunscreen", price: 300, category: "sunscreen", stock: 90, quantity: 100, unit: "ml" },
+            { id: 194, title: "Mamaearth Ultra Light Indian Sunscreen", price: 330, category: "sunscreen", stock: 70, quantity: 100, unit: "ml" },
+            { id: 195, title: "Biotique Bio Aloe Vera Sunscreen", price: 280, category: "sunscreen", stock: 85, quantity: 100, unit: "ml" },
+            { id: 196, title: "VLCC Matte Look SPF 30 Sunscreen", price: 270, category: "sunscreen", stock: 100, quantity: 100, unit: "ml" },
+            { id: 197, title: "Himalaya Herbals Protective Sunscreen", price: 250, category: "sunscreen", stock: 110, quantity: 100, unit: "ml" },
+            { id: 198, title: "Nivea Sun Protect SPF 50", price: 360, category: "sunscreen", stock: 75, quantity: 100, unit: "ml" },
+            { id: 199, title: "The Body Shop Skin Defence Sunscreen", price: 400, category: "sunscreen", stock: 50, quantity: 100, unit: "ml" },
+            { id: 200, title: "WOW Skin Science Sunscreen SPF 50", price: 390, category: "sunscreen", stock: 60, quantity: 100, unit: "ml" },
+            { id: 201, title: "Aroma Magic Sunblock Lotion", price: 260, category: "sunscreen", stock: 90, quantity: 100, unit: "ml" },
+            { id: 202, title: "Olay Complete UV Defense Lotion", price: 340, category: "sunscreen", stock: 85, quantity: 100, unit: "ml" },
+            { id: 203, title: "Cetaphil Sun SPF 50", price: 380, category: "sunscreen", stock: 60, quantity: 100, unit: "ml" },
+            { id: 204, title: "Re'equil Oxybenzone Sunscreen", price: 330, category: "sunscreen", stock: 70, quantity: 100, unit: "ml" },
+            { id: 205, title: "Derma Co Ultra Matte Sunscreen Gel", price: 410, category: "sunscreen", stock: 50, quantity: 100, unit: "ml" },
+
+            // Moisturizer
+            { id: 206, title: "Nivea Soft Light Moisturizer", price: 150, category: "moisturizer", stock: 110, quantity: 200, unit: "ml" },
+            { id: 207, title: "Pond's Light Moisturizer", price: 180, category: "moisturizer", stock: 100, quantity: 200, unit: "ml" },
+            { id: 208, title: "Cetaphil Daily Advance Moisturizer", price: 300, category: "moisturizer", stock: 80, quantity: 200, unit: "ml" },
+            { id: 209, title: "Himalaya Nourishing Skin Cream", price: 200, category: "moisturizer", stock: 90, quantity: 200, unit: "ml" },
+            { id: 210, title: "Biotique Morning Nectar Moisturizer", price: 220, category: "moisturizer", stock: 85, quantity: 200, unit: "ml" },
+            { id: 211, title: "Lakme Peach Milk Moisturizer", price: 170, category: "moisturizer", stock: 95, quantity: 200, unit: "ml" },
+            { id: 212, title: "The Body Shop Vitamin E Moisturizer", price: 350, category: "moisturizer", stock: 50, quantity: 200, unit: "ml" },
+            { id: 213, title: "Mamaearth Oil-Free Moisturizer", price: 290, category: "moisturizer", stock: 60, quantity: 200, unit: "ml" },
+            { id: 214, title: "Lotus Herbals Nutramoist Moisturizer", price: 210, category: "moisturizer", stock: 75, quantity: 200, unit: "ml" },
+            { id: 215, title: "Neutrogena Hydro Boost Water Gel", price: 380, category: "moisturizer", stock: 50, quantity: 200, unit: "ml" },
+            { id: 216, title: "CeraVe Moisturizing Cream", price: 340, category: "moisturizer", stock: 55, quantity: 200, unit: "ml" },
+            { id: 217, title: "Re'equil Oil-Free Moisturizer", price: 330, category: "moisturizer", stock: 70, quantity: 200, unit: "ml" },
+            { id: 218, title: "Aloe Veda Moisturizing Cream", price: 260, category: "moisturizer", stock: 85, quantity: 200, unit: "ml" },
+            { id: 219, title: "Garnier Light Complete Moisturizer", price: 160, category: "moisturizer", stock: 100, quantity: 200, unit: "ml" },
+            { id: 220, title: "Olay Total Effects Moisturizer", price: 400, category: "moisturizer", stock: 60, quantity: 200, unit: "ml" },
+
+            // Perfume
+            // Perfume
+            { id: 221, title: "Chanel No. 5 Eau de Parfum", price: 4500, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 222, title: "Dior Sauvage Eau de Toilette", price: 4100, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 223, title: "Gucci Bloom Eau de Parfum", price: 3900, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 224, title: "Tom Ford Black Orchid", price: 4300, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 225, title: "Versace Bright Crystal", price: 3800, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 226, title: "Calvin Klein Eternity", price: 3200, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 227, title: "Burberry Her Eau de Parfum", price: 3500, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 228, title: "Paco Rabanne 1 Million", price: 3700, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 229, title: "Yves Saint Laurent Black Opium", price: 4400, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 230, title: "Armani Code Eau de Toilette", price: 4000, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 231, title: "Hugo Boss The Scent", price: 3600, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 232, title: "Bvlgari Man in Black", price: 3900, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 233, title: "Ralph Lauren Polo Blue", price: 3700, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 234, title: "Dolce & Gabbana Light Blue", price: 4200, category: "perfume", quantity: 100, unit: "ml" },
+            { id: 235, title: "Jo Malone English Pear & Freesia", price: 4600, category: "perfume", quantity: 100, unit: "ml" },
+
+            // Nail Polish
+            { id: 236, title: "Lakme Color Crush Nail Polish", price: 120, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 237, title: "Maybelline New York Nail Polish", price: 150, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 238, title: "Faces Canada Splash Nail Polish", price: 130, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 239, title: "Revlon ColorStay Nail Polish", price: 180, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 240, title: "Colorbar Luxe Nail Lacquer", price: 160, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 241, title: "Nykaa Matte Nail Enamel", price: 140, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 242, title: "Sally Hansen Miracle Gel", price: 200, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 243, title: "Innisfree Eco Nail Color", price: 170, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 244, title: "OPI Infinite Shine Nail Polish", price: 210, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 245, title: "Chambor Gel Effect Nail Polish", price: 180, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 246, title: "Miss Claire Quick Dry Nail Polish", price: 100, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 247, title: "Essie Gel Couture Nail Polish", price: 220, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 248, title: "L'Oreal Paris Color Riche Nail Polish", price: 190, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 249, title: "Lotus Herbals Ecostay Nail Polish", price: 150, category: "nailpolish", quantity: 10, unit: "ml" },
+            { id: 250, title: "Avon True Color Nail Polish", price: 110, category: "nailpolish", quantity: 10, unit: "ml" },
+
+            // Face Cream
+            { id: 251, title: "Pond's White Beauty Face Cream", price: 220, category: "facecream", quantity: 50, unit: "g" },
+            { id: 252, title: "Fair & Lovely Glow Face Cream", price: 190, category: "facecream", quantity: 50, unit: "g" },
+            { id: 253, title: "Nivea Soft Light Face Cream", price: 250, category: "facecream", quantity: 50, unit: "g" },
+            { id: 254, title: "Himalaya Fairness Face Cream", price: 160, category: "facecream", quantity: 50, unit: "g" },
+            { id: 255, title: "Garnier Skin Naturals Face Cream", price: 240, category: "facecream", quantity: 50, unit: "g" },
+            { id: 256, title: "Olay Natural White Face Cream", price: 270, category: "facecream", quantity: 50, unit: "g" },
+            { id: 257, title: "L'Oreal Paris Day Cream", price: 300, category: "facecream", quantity: 50, unit: "g" },
+            { id: 258, title: "Biotique Morning Nectar Face Cream", price: 200, category: "facecream", quantity: 50, unit: "g" },
+            { id: 259, title: "Lakme Absolute Perfect Radiance Cream", price: 290, category: "facecream", quantity: 50, unit: "g" },
+            { id: 260, title: "Mamaearth Bye Bye Blemishes Cream", price: 320, category: "facecream", quantity: 50, unit: "g" },
+            { id: 261, title: "VLCC Clear Tan Face Cream", price: 210, category: "facecream", quantity: 50, unit: "g" },
+            { id: 262, title: "Lotus Herbals WhiteGlow Face Cream", price: 250, category: "facecream", quantity: 50, unit: "g" },
+            { id: 263, title: "Neutrogena Oil-Free Moisture Cream", price: 330, category: "facecream", quantity: 50, unit: "g" },
+            { id: 264, title: "Cetaphil Moisturizing Face Cream", price: 280, category: "facecream", quantity: 50, unit: "g" },
+            { id: 265, title: "Olay Total Effects Face Cream", price: 340, category: "facecream", quantity: 50, unit: "g" },
+
+            // Makeup Remover
+            { id: 266, title: "Garnier Micellar Cleansing Water", price: 250, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 267, title: "Maybelline New York Makeup Remover", price: 220, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 268, title: "Lakme Absolute Bi-Phased Makeup Remover", price: 300, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 269, title: "L'Oreal Paris Gentle Lip & Eye Makeup Remover", price: 270, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 270, title: "The Body Shop Camomile Makeup Remover", price: 380, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 271, title: "Clinique Take The Day Off Makeup Remover", price: 450, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 272, title: "Bioderma Sensibio H2O Micellar Water", price: 400, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 273, title: "Nivea Daily Essentials Eye Makeup Remover", price: 230, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 274, title: "Neutrogena Oil-Free Makeup Remover", price: 320, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 275, title: "Colorbar On The Go Makeup Remover Wipes", price: 150, category: "makeupremover", quantity: 25, unit: "wipes" },
+            { id: 276, title: "Mamaearth Micellar Water Foaming Remover", price: 340, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 277, title: "Bobbi Brown Instant Long-Wear Makeup Remover", price: 480, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 278, title: "Faces Canada Eye & Lip Makeup Remover", price: 280, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 279, title: "Revlon Eye & Lip Makeup Remover", price: 310, category: "makeupremover", quantity: 200, unit: "ml" },
+            { id: 280, title: "VLCC Makeup Remover Wipes", price: 200, category: "makeupremover", quantity: 25, unit: "wipes" },
+
+            // Eye Cream
+            { id: 281, title: "Himalaya Under Eye Cream", price: 260, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 282, title: "Mamaearth Bye Bye Dark Circles Eye Cream", price: 320, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 283, title: "L'Oreal Paris Revitalift Eye Cream", price: 400, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 284, title: "Clinique All About Eyes Eye Cream", price: 480, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 285, title: "The Body Shop Vitamin E Eye Cream", price: 350, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 286, title: "Biotique Bio Seaweed Eye Cream", price: 280, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 287, title: "Lotus Herbals WhiteGlow Eye Cream", price: 330, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 288, title: "Olay Regenerist Eye Lifting Serum", price: 450, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 289, title: "VLCC Almond Under Eye Cream", price: 290, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 290, title: "Kiehl's Creamy Eye Treatment", price: 500, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 291, title: "Neutrogena Rapid Wrinkle Repair Eye Cream", price: 370, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 292, title: "Cetaphil Hydrating Eye Cream", price: 340, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 293, title: "Forest Essentials Intensive Eye Cream", price: 460, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 294, title: "Plum Bright Years Eye Cream", price: 310, category: "eyecream", quantity: 15, unit: "g" },
+            { id: 295, title: "Estee Lauder Advanced Night Repair Eye Cream", price: 520, category: "eyecream", quantity: 15, unit: "g" },
+
+            // Lip Balm
+            { id: 296, title: "Maybelline Baby Lips Lip Balm", price: 150, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 297, title: "Nivea Fruity Shine Lip Balm", price: 120, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 298, title: "Biotique Bio Fruit Lip Balm", price: 100, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 299, title: "Himalaya Herbals Lip Balm", price: 80, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 300, title: "The Body Shop Vitamin E Lip Balm", price: 250, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 301, title: "Lakme Lip Love Chapstick", price: 170, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 302, title: "Vaseline Lip Therapy", price: 190, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 303, title: "Neutrogena Norwegian Formula Lip Balm", price: 210, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 304, title: "Plum Candy Cane Lip Balm", price: 180, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 305, title: "Carrot Seed Lip Balm", price: 130, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 306, title: "ChapStick Classic Lip Balm", price: 110, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 307, title: "Burt's Bees Beeswax Lip Balm", price: 250, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 308, title: "Kiehl's Lip Balm #1", price: 280, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 309, title: "EOS Organic Lip Balm", price: 230, category: "lipbalm", quantity: 4.5, unit: "g" },
+            { id: 310, title: "Carmex Lip Balm", price: 150, category: "lipbalm", quantity: 4.5, unit: "g" },
+
+            // Hair Gel
+            { id: 311, title: "Set Wet Style Casual Hair Gel", price: 120, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 312, title: "Gatsby Water Gloss Hair Gel", price: 150, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 313, title: "Schwarzkopf Taft Power Hair Gel", price: 180, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 314, title: "L'Oreal Paris Studio Line Hair Gel", price: 200, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 315, title: "Beardo Strong Hold Hair Gel", price: 230, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 316, title: "Park Avenue Styling Hair Gel", price: 170, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 317, title: "Brylcreem Wet Look Hair Gel", price: 140, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 318, title: "Set Wet Style Cool Hold Gel", price: 130, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 319, title: "Man Arden Hair Fiber Gel", price: 250, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 320, title: "Ustraa Strong Hold Hair Gel", price: 220, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 321, title: "Enliven Pro-Vitamin Hair Gel", price: 160, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 322, title: "Arata Organic Hair Gel", price: 270, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 323, title: "TIGI Bed Head Hair Gel", price: 350, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 324, title: "American Crew Firm Hold Styling Gel", price: 400, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+            { id: 325, title: "Paul Mitchell Super Clean Hair Gel", price: 380, category: "hairgel", stock: 200, quantity: 200, unit: "g" },
+
+
+            // Add more categories and products similarly...
+        ];
+
+        function loadProducts(productsToShow) {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+            productsToShow.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.classList.add('product-item');
+                productItem.innerHTML = `
+                <h3>${product.title}</h3>
+                <p>Price: ₹${product.price}</p>
+                <p><strong>Stock Available:</strong> ${product.stock}</p>
+                <p><strong>Quantity:</strong> ${product.quantity} ${product.unit}</p>
+                <button onclick="addToCart(${product.id})">Add to Cart</button>
+            `;
+                productList.appendChild(productItem);
+            });
+        }
+
+        // Initial load of all products
+        loadProducts(products);
+
+        function addToCart(productId) {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const product = products.find(p => p.id === productId);
+                const existingProduct = cart.find(p => p.id === productId);
+
+                if (existingProduct) {
+                    existingProduct.quantity += 1;
+                } else {
+                    cart.push({ ...product, quantity: 1 });
+                    // Store item name in localStorage
+                    localStorage.setItem('itemName', product.title); // Store the product name
+                }
+
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                showConfirmationMessage(product.title);
+            }
+
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
+            document.getElementById('cart-count').textContent = cartCount;
+        }
+
+        function showConfirmationMessage(productName) {
+            const confirmationMessage = document.createElement('div');
+            confirmationMessage.classList.add('confirmation-message');
+            confirmationMessage.textContent = `${productName} has been added to your cart!`;
+
+            document.body.appendChild(confirmationMessage);
+
+            // Automatically remove the confirmation message after 3 seconds
+            setTimeout(() => {
+                confirmationMessage.remove();
+            }, 3000);
+        }
+
+        // Filters based on category and name
+        document.getElementById('category-filter').addEventListener('change', applyFilters);
+        document.getElementById('name-filter').addEventListener('change', applyFilters);
+
+        function applyFilters() {
+            const category = document.getElementById('category-filter').value;
+            const name = document.getElementById('name-filter').value.toLowerCase();
+
+            const filteredProducts = products.filter(product => {
+                const matchesCategory = !category || product.category === category;
+                const matchesName = !name || product.title.toLowerCase().includes(name);
+                return matchesCategory && matchesName;
+            });
+
+            loadProducts(filteredProducts);
+        }
+    </script>
+
+
+</body>
+
+</html>

@@ -506,6 +506,25 @@ app.post('/pickUpItemByBarcode', (req, res) => {
     });
 });
 
+// Endpoint to handle order placement
+app.post('/api/orders', (req, res) => {
+    const { orderId, price, itemName } = req.body;
+
+    // SQL query to insert new order
+    const query = `
+        INSERT INTO orders (order_id, price, item_name, order_date, order_time)
+        VALUES (?, ?, ?, CURDATE(), CURTIME())
+    `;
+
+    db.execute(query, [orderId, price, itemName], (err, results) => {
+        if (err) {
+            console.error('Error inserting order:', err);
+            return res.status(500).json({ error: 'Failed to place order' });
+        }
+        res.status(201).json({ message: 'Order placed successfully', orderId });
+    });
+});
+
 
 
 // Default route for undefined routes

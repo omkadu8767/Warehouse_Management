@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmed Order</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <h1>Confirmed Order</h1>
+    <nav>
+        <a href="order.html">Home</a>
+    </nav>
+</header>
+
+<main>
+    <h2>Your Order Details</h2>
+    <div id="order-details" class="order-details">
+        <!-- Order details will be dynamically loaded here by JavaScript -->
+    </div>
+</main>
+
+<script>
+    window.onload = function() {
+        loadOrderDetails();
+    };
+
+    function loadOrderDetails() {
+        const order = JSON.parse(localStorage.getItem('confirmedOrder')) || [];
+        const orderDetailsDiv = document.getElementById('order-details');
+        orderDetailsDiv.innerHTML = ''; // Clear previous order details
+
+        if (order.length === 0) {
+            orderDetailsDiv.innerHTML = '<p>No order details found.</p>';
+            return;
+        }
+
+        let total = 0;
+        order.forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'order-item';
+            itemDiv.innerHTML = `<p>${item.title} - ₹${item.price} x ${item.quantity}</p>`;
+            orderDetailsDiv.appendChild(itemDiv);
+            total += item.price * item.quantity;
+        });
+
+        const totalDiv = document.createElement('div');
+        totalDiv.className = 'order-total';
+        totalDiv.innerHTML = `<p>Total: ₹${total.toFixed(2)}</p>`;
+        orderDetailsDiv.appendChild(totalDiv);
+
+        // Clear confirmed order from localStorage after displaying
+        localStorage.removeItem('confirmedOrder');
+    }
+</script>
+
+</body>
+</html>

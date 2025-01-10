@@ -108,14 +108,14 @@
         }
     </style>
     <script>
-    function viewRacks() {
-        fetch("/viewRacks")
-            .then(response => response.json())
-            .then(data => {
-                if (data.length === 0) {
-                    document.getElementById("message").innerHTML = "<p>No racks available.</p>";
-                } else {
-                    let tableHTML = `
+        function viewRacks() {
+            fetch("/viewRacks")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        document.getElementById("message").innerHTML = "<p>No racks available.</p>";
+                    } else {
+                        let tableHTML = `
                     <table>
                         <thead>
                             <tr>
@@ -126,21 +126,21 @@
                         </thead>
                         <tbody>
                 `;
-                    data.forEach(rack => {
-                        tableHTML += `
+                        data.forEach(rack => {
+                            tableHTML += `
                         <tr>
                             <td>${rack.rack_name}</td>
                             <td>${rack.num_shelves}</td>
                             <td>${rack.num_bins}</td>
                         </tr>
                     `;
-                    });
-                    tableHTML += "</tbody></table>";
-                    document.getElementById("message").innerHTML = tableHTML;
-                }
-            })
-            .catch(err => console.error("Error fetching racks:", err));
-    }
+                        });
+                        tableHTML += "</tbody></table>";
+                        document.getElementById("message").innerHTML = tableHTML;
+                    }
+                })
+                .catch(err => console.error("Error fetching racks:", err));
+        }
 
     </script>
 </head>
@@ -166,6 +166,8 @@
             <li><a href="./additembarcode.html">Add Item by Barcode</a></li>
             <li><a href="./pickitem.html">Pick Item</a></li>
             <li><a href="./pickitembarcode.html">Pick Item by Barcode</a></li>
+            <li><a href="./Products/order.html">Products</a></li>
+
         </ul>
     </nav>
 </body>

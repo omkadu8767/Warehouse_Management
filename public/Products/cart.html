@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333; /* Standard light black */
+            color: greenyellow;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: greenyellow;
+            margin: 0 15px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .cart-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .cart-item {
+            width: calc(100% / 6 - 20px); /* Six items per row with spacing */
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+            border-radius: 5px;
+        }
+
+        .cart-item p {
+            margin: 10px 0;
+        }
+
+        select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #333; /* Standard light black */
+            color: greenyellow;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #111; /* Slightly darker on hover */
+        }
+
+        #cart-total {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        #checkout-link {
+            margin-top: 15px;
+            display: inline-block;
+            background-color: #333; /* Standard light black */
+            color:greenyellow ;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        #checkout-link:hover {
+            background-color: #111; /* Slightly darker on hover */
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Shopping Cart</h1>
+    <nav>
+        <a href="order.html">Home</a>
+        <a href="cart.html" id="cart-link">Cart (<span id="cart-count">0</span>)</a>
+    </nav>
+</header>
+
+<main>
+    <h2>Your Cart</h2>
+    <div id="cart-items" class="cart-items">
+        <!-- Cart items will be dynamically loaded here by JavaScript -->
+    </div>
+    <p id="cart-total">Total: ₹0.00</p>
+    <button id="checkout-link">Proceed to Buy</button>
+</main>
+
+<script>
+    // Load cart items from localStorage when the page loads
+    window.onload = function () {
+            loadCartItems();
+            updateCartCount();
+
+            // Retrieve item name from localStorage
+            const itemName = localStorage.getItem('itemName');
+            if (itemName) {
+                console.log("Item added to cart:", itemName); // You can display this as needed
+            }
+        };
+
+
+    // Function to load cart items from localStorage
+    function loadCartItems() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartItemsDiv = document.getElementById('cart-items');
+        cartItemsDiv.innerHTML = ''; // Clear previous items
+        let total = 0;
+
+        cart.forEach((item, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'cart-item';
+            itemDiv.innerHTML = `
+                <p>${item.title} - ₹${item.price} x ${item.quantity}</p>
+                <label for="quantity-${index}">Quantity:</label>
+                <select id="quantity-${index}" onchange="updateTotal()">
+                    ${[1, 2, 3, 4, 5].map(q => `<option value="${q}" ${q === item.quantity ? 'selected' : ''}>${q}</option>`).join('')}
+                </select>
+                <button onclick="removeFromCart(${index})">Remove</button>
+            `;
+            cartItemsDiv.appendChild(itemDiv);
+            total += item.price * item.quantity;
+        });
+
+        document.getElementById('cart-total').innerText = `Total: ₹${total.toFixed(2)}`;
+    }
+
+    // Update total price based on quantity
+    function updateTotal() {
+        const quantities = document.querySelectorAll('select[id^="quantity-"]');
+        let total = 0;
+
+        quantities.forEach((select, index) => {
+            const quantity = parseInt(select.value);
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            total += cart[index].price * quantity;
+            cart[index].quantity = quantity; // Update quantity in cart
+            localStorage.setItem('cart', JSON.stringify(cart)); // Update localStorage
+        });
+
+        document.getElementById('cart-total').innerText = `Total: ₹${total.toFixed(2)}`;
+    }
+
+    // Remove item from cart
+    function removeFromCart(index) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart)); // Update localStorage
+        loadCartItems(); // Reload cart items
+    }
+
+    // Update the cart count in the header
+    function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        document.getElementById('cart-count').innerText = cart.length;
+    }
+
+    // Proceed to buy logic
+    document.getElementById('checkout-link').addEventListener('click', function (event) {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                event.preventDefault();
+                alert('Your cart is empty. Please add products to your cart before proceeding to buy.');
+            } else {
+                const total = document.getElementById('cart-total').innerText.replace('Total: ₹', '');
+                localStorage.setItem('orderTotal', total); // Store order total in localStorage
+                localStorage.setItem('itemName', JSON.stringify(cart.map(item => item.title))); // Store all item names as an array
+                localStorage.removeItem('cart'); // Clear cart after order
+                window.location.href = 'order-confirmation.html'; // Redirect to confirmation page
+            }
+        });
+
+</script>
+
+</body>
+</html>
