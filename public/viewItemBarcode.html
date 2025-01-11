@@ -126,7 +126,7 @@
                 <th>Added Quantity</th>
                 <th>Picked Quantity</th>
                 <th>Available Quantity</th>
-                <th>Unit</th>
+                <th>Time Stamp</th>
             </tr>
         </thead>
         <tbody>
@@ -135,53 +135,32 @@
     </table>
 
     <script>
-        let items = {};
-
         function fetchAndDisplayItems() {
-            fetch('/viewitems') // Endpoint to fetch all item data
+            fetch('/availableItemsBarcode') // Endpoint to fetch all available items data
                 .then(response => response.json())
                 .then(data => {
-                    // Process the fetched items
+                    const tableBody = document.getElementById('itemsTable').querySelector('tbody');
+                    tableBody.innerHTML = ''; // Clear existing rows
+
                     data.forEach(item => {
-                        if (!items[item.item_id]) {
-                            items[item.item_id] = {
-                                item_id: item.item_id,
-                                item_name: item.item_name,
-                                added_quantity: 0,
-                                picked_quantity: 0,
-                                unit: item.unit || 'N/A'
-                            };
-                        }
-                        items[item.item_id].added_quantity += item.added_quantity || 0;
-                        items[item.item_id].picked_quantity += item.picked_quantity || 0;
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                        <td>${item.item_id}</td>
+                        <td>${item.item_name}</td>
+                        <td>${item.added_quantity}</td>
+                        <td>${item.picked_quantity}</td>
+                        <td>${item.available_quantity}</td>
+                        <td>${item.transaction_date}</td>
+                    `;
+                        tableBody.appendChild(row);
                     });
-                    displayItems();
                 })
                 .catch(error => console.error('Error fetching items:', error));
         }
 
-        function displayItems() {
-            const tableBody = document.getElementById('itemsTable').querySelector('tbody');
-            tableBody.innerHTML = ''; // Clear existing rows
-
-            Object.values(items).forEach(item => {
-                const availableQuantity = item.added_quantity - item.picked_quantity;
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.item_id}</td>
-                    <td>${item.item_name}</td>
-                    <td>${item.added_quantity}</td>
-                    <td>${item.picked_quantity}</td>
-                    <td>${availableQuantity}</td>
-                    <td>${item.unit}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-
-        fetchAndDisplayItems(); // Fetch and display items on page load
+        document.querySelector("button").onclick = fetchAndDisplayItems; // Fetch and display items on button click
     </script>
+
 
 </body>
 

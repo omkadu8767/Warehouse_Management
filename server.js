@@ -333,8 +333,18 @@ app.post('/addItemByBarcode', (req, res) => {
             return res.status(500).json({ message: 'Error adding item by barcode' });
         }
 
-        res.json({
-            message: 'Item added to warehouse by barcode successfully',
+        // Update available_items_barcode table
+        const availableUpdateSql = `
+            INSERT INTO available_items_barcode (item_id, item_name, added_quantity, picked_quantity)
+            VALUES (?, ?, ?, 0)
+            ON DUPLICATE KEY UPDATE added_quantity = added_quantity + VALUES(added_quantity)
+        `;
+        db.query(availableUpdateSql, [barcode_value, item_name, item_quantity], (err) => {
+            if (err) {
+                console.error('Error updating available items by barcode:', err);
+                return res.status(500).send('Error updating available items by barcode');
+            }
+            res.json({ message: 'Item added to warehouse by barcode successfully' });
         });
     });
 });
@@ -380,18 +390,18 @@ app.get('/items', (req, res) => {
 });
 
 // Endpoint to fetch all available barcodes
-app.get('/barcodes', (req, res) => {
-    const sqlGetBarcodes = 'SELECT DISTINCT barcode_value FROM add_item_to_warehouse_by_barcode_scanning';
+// app.get('/barcodes', (req, res) => {
+//     const sqlGetBarcodes = 'SELECT DISTINCT barcode_value FROM add_item_to_warehouse_by_barcode_scanning';
 
-    db.query(sqlGetBarcodes, (err, results) => {
-        if (err) {
-            console.error('Error fetching barcodes:', err);
-            return res.status(500).json({ message: 'Error fetching barcodes' });
-        }
+//     db.query(sqlGetBarcodes, (err, results) => {
+//         if (err) {
+//             console.error('Error fetching barcodes:', err);
+//             return res.status(500).json({ message: 'Error fetching barcodes' });
+//         }
 
-        res.json(results); // Send back the list of barcodes
-    });
-});
+//         res.json(results); // Send back the list of barcodes
+//     });
+// });
 
 // Endpoint to fetch all available barcodes
 app.get('/barcodes', (req, res) => {
@@ -520,10 +530,21 @@ app.post('/pickUpItemByBarcode', (req, res) => {
                     return res.status(500).json({ message: 'Error adding pick-up transaction' });
                 }
 
-                res.json({
-                    message: 'Item picked successfully',
-                    item_name: item_name,
-                    picked_quantity: item_quantity,
+                // Step 5: Update available_items_barcode table
+                const availableUpdateSql = `
+                    UPDATE available_items_barcode 
+                    SET picked_quantity = picked_quantity + ?
+                    WHERE item_id = ?
+                `;
+                db.query(availableUpdateSql, [item_quantity, barcode_value], (err) => {
+                    if (err) {
+                        console.error('Error updating available items by barcode:', err);
+                        return res.status(500).send('Error updating available items by barcode');
+                    }
+                    res.json({
+                        message: 'Item picked successfully',
+                        picked_quantity: item_quantity,
+                    });
                 });
             });
         });
@@ -557,6 +578,15 @@ app.get('/availableItems', (req, res) => {
         res.json(results);
     });
 });
+
+app.get('/availableItemsBarcode', (req, res) => {
+    const query = 'SELECT * FROM available_items_barcode';
+    db.query(query, (err, results) => {
+        if (err) return res.status(500).send(err);
+        res.json(results);
+    });
+});
+
 
 
 

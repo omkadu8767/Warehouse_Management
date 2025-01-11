@@ -110,7 +110,6 @@
             <li><a href="./pickitem.html">Pick Item</a></li>
             <li><a href="./pickitembarcode.html">Pick Item by Barcode</a></li>
             <li><a href="./Products/order.html">Products</a></li>
-
         </ul>
     </nav>
 
@@ -118,7 +117,7 @@
 
     <button onclick="fetchAndDisplayItems()">View Items</button>
 
-    <table id="itemsTable">
+    <table id="itemsTable"> <!-- Initially hidden -->
         <thead>
             <tr>
                 <th>Item ID</th>
@@ -126,7 +125,7 @@
                 <th>Added Quantity</th>
                 <th>Picked Quantity</th>
                 <th>Available Quantity</th>
-                <th>Unit</th>
+                <th>Time Stamp</th>
             </tr>
         </thead>
         <tbody>
@@ -145,23 +144,22 @@
                     data.forEach(item => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                        <td>${item.item_id}</td>
-                        <td>${item.item_name}</td>
-                        <td>${item.added_quantity}</td>
-                        <td>${item.picked_quantity}</td>
-                        <td>${item.available_quantity}</td>
-                        <td>${item.transaction_date}</td>
-                    `;
+                            <td>${item.item_id}</td>
+                            <td>${item.item_name}</td>
+                            <td>${item.added_quantity}</td>
+                            <td>${item.picked_quantity}</td>
+                            <td>${item.available_quantity}</td>
+                            <td>${item.transaction_date}</td>
+                        `;
                         tableBody.appendChild(row);
                     });
+
+                    // Show the table after data is loaded
+                    document.getElementById('itemsTable').style.display = 'table';
                 })
                 .catch(error => console.error('Error fetching items:', error));
         }
-
-        fetchAndDisplayItems(); // Fetch and display items on page load
     </script>
-
-
 
 </body>
 
