@@ -148,6 +148,7 @@
             <li><a href="./subcategory.html">Add Subcategory</a></li>
             <li><a href="./item.html">Define Item</a></li>
             <li><a href="./viewItem.html">View Item</a></li>
+            <li><a href="./viewItemBarcode.html">View Item Barcode</a></li>
             <li><a href="./additem.html">Add Item to WareHouse</a></li>
             <li><a href="./additembarcode.html">Add Item by Barcode</a></li>
             <li><a href="./pickitem.html">Pick Item</a></li>
@@ -234,6 +235,19 @@
 
                         // Clear form inputs
                         document.getElementById("addItemForm").reset(); // Reset form inputs
+
+                         // After adding to warehouse, also update available_items
+                        fetch('/updateAvailableItems', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                item_id: data.item_id,
+                                item_name: data.item_name,
+                                added_quantity: data.item_add_quantity
+                            })
+                        });
                     }
                 })
                 .catch(error => {

@@ -240,7 +240,19 @@ app.post('/addItemToWarehouse', (req, res) => {
                 return res.status(500).send('Error updating item quantity');
             }
 
-            res.send('Item added to warehouse successfully');
+            // Update available_items table
+            const availableUpdateSql = `
+                INSERT INTO available_items (item_id, item_name, added_quantity, picked_quantity)
+                VALUES (?, ?, ?, 0)
+                ON DUPLICATE KEY UPDATE added_quantity = added_quantity + VALUES(added_quantity)
+            `;
+            db.query(availableUpdateSql, [item_id, item_name, item_add_quantity], (err) => {
+                if (err) {
+                    console.error('Error updating available items:', err);
+                    return res.status(500).send('Error updating available items');
+                }
+                res.send('Item added to warehouse successfully');
+            });
         });
     });
 });
@@ -255,7 +267,7 @@ app.get('/items', (req, res) => {
     });
 });
 
-// Endpoint to add items to the warehouse
+// Endpoint to pick items to the warehouse
 app.post('/pickUpItem', (req, res) => {
     const { item_id, item_pick_quantity, item_name } = req.body;
 
@@ -283,7 +295,19 @@ app.post('/pickUpItem', (req, res) => {
                 return res.status(500).send('Error updating item quantity');
             }
 
-            res.send('Item picked from warehouse successfully'); // Success message returned to client
+            // Update available_items table
+            const availableUpdateSql = `
+                UPDATE available_items 
+                SET picked_quantity = picked_quantity + ?
+                WHERE item_id = ?
+            `;
+            db.query(availableUpdateSql, [item_pick_quantity, item_id], (err) => {
+                if (err) {
+                    console.error('Error updating available items:', err);
+                    return res.status(500).send('Error updating available items');
+                }
+                res.send('Item picked from warehouse successfully'); // Success message returned to client
+            });
         });
     });
 });
@@ -524,6 +548,16 @@ app.post('/api/orders', (req, res) => {
         res.status(201).json({ message: 'Order placed successfully', orderId });
     });
 });
+
+// Endpoint to fetch available items
+app.get('/availableItems', (req, res) => {
+    const query = 'SELECT * FROM available_items';
+    db.query(query, (err, results) => {
+        if (err) return res.status(500).send(err);
+        res.json(results);
+    });
+});
+
 
 
 
