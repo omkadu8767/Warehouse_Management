@@ -118,19 +118,31 @@ app.post('/addSubcategory', (req, res) => {
             return res.status(400).send('Category does not exist. Please add the category first.');
         }
 
-        // Create subcategory ID based on your requirements
-        const subcategory_id = `${category_id}-${Date.now().toString().slice(-4)}`;
-        const sql = 'INSERT INTO subcategories (subcategory_id, subcategory_name, category_id) VALUES (?, ?, ?)';
+        // Check for duplicate subcategory name
+        const checkDuplicateSql = 'SELECT * FROM subcategories WHERE subcategory_name = ? AND category_id = ?';
+        db.query(checkDuplicateSql, [subcategory_name, category_id], (err, duplicateResults) => {
+            if (err) return handleError(err, res, 'Error checking for duplicates');
 
-        db.query(sql, [subcategory_id, subcategory_name, category_id], (err) => {
-            if (err) {
-                console.error(err); // Log any SQL errors
-                return res.status(500).send('Error adding subcategory');
+            if (duplicateResults.length > 0) {
+                return res.status(400).send('Subcategory name already exists under this category.');
             }
-            res.send('Subcategory added successfully');
+
+            // Create subcategory ID based on your requirements
+            const subcategory_id = `${category_id}-${Date.now().toString().slice(-4)}`;
+            const sql = 'INSERT INTO subcategories (subcategory_id, subcategory_name, category_id) VALUES (?, ?, ?)';
+
+            db.query(sql, [subcategory_id, subcategory_name, category_id], (err) => {
+                if (err) {
+                    console.error(err); // Log any SQL errors
+                    return res.status(500).send('Error adding subcategory');
+                }
+                res.send('Subcategory added successfully');
+            });
         });
     });
 });
+
+
 
 // Handle retrieving categories for the UI
 app.get('/categories', (req, res) => {
@@ -186,6 +198,7 @@ app.get('/subcategories', (req, res) => {
         res.json(results); // Send subcategories as JSON
     });
 });
+
 
 
 // Transactions (Feature 7, 9, 10)

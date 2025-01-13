@@ -63,12 +63,13 @@ The server will run on `http://localhost:3000` by default.
 
    ```sql
    CREATE TABLE `racks` (
-     `rack_id` int NOT NULL AUTO_INCREMENT,
-     `rack_name` varchar(50) NOT NULL,
-     `num_shelves` int NOT NULL,
-     `num_bins` int NOT NULL,
-     PRIMARY KEY (`rack_id`)
-   ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    `rack_id` int NOT NULL AUTO_INCREMENT,
+    `rack_name` varchar(50) NOT NULL,
+    `num_shelves` int NOT NULL,
+    `num_bins` int NOT NULL,
+    PRIMARY KEY (`rack_id`),
+    UNIQUE KEY `unique_rack_name` (`rack_name`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
    CREATE TABLE `shelves` (
      `shelf_id` varchar(50) NOT NULL,
@@ -92,20 +93,42 @@ The server will run on `http://localhost:3000` by default.
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
    CREATE TABLE `categories` (
-     `category_id` int NOT NULL AUTO_INCREMENT,
-     `category_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-     PRIMARY KEY (`category_id`)
-   ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `category_id` int NOT NULL AUTO_INCREMENT,
+  `category_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`category_id`),
+  UNIQUE KEY `unique_category_name` (`category_name`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 
    CREATE TABLE `subcategories` (
-     `subcategory_id` varchar(50) NOT NULL,
-     `subcategory_name` varchar(255) NOT NULL,
-     `category_id` int NOT NULL,
-     PRIMARY KEY (`subcategory_id`),
-     KEY `fk_category` (`category_id`),
-     CONSTRAINT `fk_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`),
-     CONSTRAINT `subcategories_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`)
-   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `subcategory_id` varchar(50) NOT NULL,
+  `subcategory_name` varchar(255) NOT NULL,
+  `category_id` int NOT NULL,
+  PRIMARY KEY (`subcategory_id`),
+  UNIQUE KEY `unique_subcategory_name` (`subcategory_name`),
+  KEY `fk_category` (`category_id`),
+  CONSTRAINT `fk_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`),
+  CONSTRAINT `subcategories_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+   CREATE TABLE `items` (
+  `item_id` int NOT NULL AUTO_INCREMENT,
+  `item_name` varchar(100) NOT NULL,
+  `category_id` int DEFAULT NULL,
+  `subcategory_name` varchar(100) DEFAULT NULL,
+  `rack_id` int DEFAULT NULL,
+  `subcategory_id` varchar(50) DEFAULT NULL,
+  `quantity` int NOT NULL,
+  `quantity_unit` varchar(50) NOT NULL,
+  `barcode_value` varchar(255) NOT NULL,
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `unique_item_name` (`item_name`),
+  KEY `category_id` (`category_id`),
+  KEY `rack_id` (`rack_id`),
+  KEY `fk_subcategory` (`subcategory_id`),
+  CONSTRAINT `fk_subcategory` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories` (`subcategory_id`),
+  CONSTRAINT `items_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`),
+  CONSTRAINT `items_ibfk_2` FOREIGN KEY (`rack_id`) REFERENCES `racks` (`rack_id`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
    CREATE TABLE `add_item_to_warehouse` (
      `transaction_id` int NOT NULL AUTO_INCREMENT,
@@ -155,6 +178,26 @@ The server will run on `http://localhost:3000` by default.
      `order_time` time NOT NULL,
      PRIMARY KEY (order_id)
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4    COLLATE=utf8mb4_0900_ai_ci;
+
+   CREATE TABLE `available_items` (
+  `item_id` int NOT NULL,
+  `item_name` varchar(255) NOT NULL,
+  `added_quantity` int NOT NULL,
+  `picked_quantity` int NOT NULL,
+  `available_quantity` int GENERATED ALWAYS AS ((`added_quantity` - `picked_quantity`)) STORED,
+  `transaction_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`item_id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+  CREATE TABLE `available_items_barcode` (
+  `item_id` int NOT NULL,
+  `item_name` varchar(255) NOT NULL,
+  `added_quantity` int NOT NULL,
+  `picked_quantity` int NOT NULL,
+  `available_quantity` int GENERATED ALWAYS AS ((`added_quantity` - `picked_quantity`)) STORED,
+  `transaction_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`item_id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
    ```
 
    
